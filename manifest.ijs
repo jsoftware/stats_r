@@ -14,7 +14,7 @@ LABCATEGORY=: 'Stats'
 
 VERSION=: '1.0.0'
 
-RELEASE=: 'j601'
+RELEASE=: 'j601 j602'
 
 FILES=: 0 : 0
 rdcmd.ijs
