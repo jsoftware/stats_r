@@ -1,4 +1,4 @@
-NB. built from project: ~home/deb/public/r/dsock/dsock
+NB. built from project: ~Public/r/dsock/dsock
 NB. init
 
 script_z_ '~system/main/dll.ijs'
@@ -459,8 +459,6 @@ EMPTY
 NB. =========================================================
 read=: 3 : 'readsk SK'
 send=: 3 : 'y sendsk SK'
-
-read=: 3 : 'RR__=: readsk SK'
 
 
 NB. toj
