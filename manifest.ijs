@@ -1,4 +1,4 @@
-NB. dendrite manifest
+NB. R manifest
 
 CAPTION=: 'Interfaces to R statistical package'
 
