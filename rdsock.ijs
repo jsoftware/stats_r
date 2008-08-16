@@ -1,4 +1,4 @@
-NB. built from project: ~Public/r/dsock/dsock
+NB. built from project: ~R/dsock/dsock
 NB. init
 
 script_z_ '~system/main/dll.ijs'
@@ -57,6 +57,7 @@ firstones=: > (0: , }:)
 info=: wdinfo @ ('dsock'&;)
 ischar=: 2: = 3!:0
 isinteger=: (-: <.) ::0:
+isnan=: 128!:5
 issymbol=: 65536"_ = 3!:0
 round=: [ * [: <. 0.5"_ + %~
 roundint=: <. @ +&0.5
@@ -126,6 +127,12 @@ end.
 )
 
 NB. =========================================================
+tag2sym=: 3 : 0
+ndx=. >:+:i.-:#y
+(<&> s: ndx{y) ndx}y
+)
+
+NB. =========================================================
 throw=: 3 : 0
 msg=. y
 if. ischar msg do. msg=. 1;msg end.
@@ -150,6 +157,7 @@ wraplen=: 4 : '(x rtyplen #y),y'
 
 
 NB. defs
+NB. source: http://svn.rforge.net/Rserve/trunk/src/Rsrv.h
 
 OK=: 0;EMPTY
 THROW=: ''
@@ -256,12 +264,22 @@ XT_STR=: 3            NB. data: [n]char null-term. strg.
 XT_LANG=: 4           NB. data: same as XT_LIST
 XT_SYM=: 5            NB. data: [n]char symbol name
 XT_BOOL=: 6           NB. data: [1] byte boolean (1=TRUE, 0=FALSE, 2=NA)
+XT_S4=: 7             NB. data: [0] ?
 XT_VECTOR=: 16        NB. data: [?]REXP
-XT_LIST=: 17          NB. X head, X vals, X tag (since 0.1-5)
-XT_CLOS=: 18          NB. X formals, X body  (closure; since 0.1-5)
+XT_LIST=: 17          NB. X head, X vals, X tag
+XT_CLOS=: 18          NB. X formals, X body  (closure)
+XT_SYMNAME=: 19       NB. same as XT_STR
+XT_LIST_NOTAG=: 20    NB. same as XT_VECTOR
+XT_LIST_TAG=: 21      NB. P X tag, X val, Y tag, Y val, ...
+XT_LANG_NOTAG=: 22    NB. same as XT_LIST_NOTAG
+XT_LANG_TAG=: 23      NB. same as XT_LIST_TAG
+XT_VECTOR_EXP=: 26    NB. same as XT_VECTOR
+XT_VECTOR_STR=: 27    NB. same as XT_VECTOR (unused, use XT_ARRAY_STR instead) */
 XT_ARRAY_INT=: 32     NB. data: [n*4]int,int,..
 XT_ARRAY_DOUBLE=: 33  NB. data: [n*8]double,double,..
 XT_ARRAY_STR=: 34     NB. data: [?]string,string,..
+XT_RAW=: 37           NB. P data: int(n),byte,byte,...
+XT_ARRAY_CPLX=: 38    NB. P data: [n*16]double,double,... (Re,Im,Re,Im,...)
 XT_ARRAY_BOOL_UA=: 35 NB. data: [n]byte,byte,..  (unaligned! NOT supported anymore)
 XT_ARRAY_BOOL=: 36    NB. data: int(n),byte,byte,...
 XT_UNKNOWN=: 48       NB. data: [4]int - SEXP type (as from TYPEOF(x))
@@ -500,7 +518,7 @@ end.
 NB. =========================================================
 NB. toJ
 NB.
-NB. note only a few types used in Rserve
+NB. note only a few types are used in Rserve
 toJ=: 3 : 0
 typ=. ax {. y
 'hdr len'=. rhdrlen y
@@ -548,24 +566,43 @@ case. XT_SYM do.
   s: <toJX dat
 case. XT_BOOL do.
   , ax {. dat
+case. XT_S4 do.
+  smoutput 'XT_S4 not yet'
+  assert. 0
 case. XT_VECTOR do.
   toJXvector dat
 case. XT_LIST do.
   toJXlist dat
 case. XT_CLOS do.
   toJX dat
+case. XT_SYMNAME do.
+  (dat i. ALPH0) {. dat
+case. XT_LIST_NOTAG do.
+  toJXvector dat
+case. XT_LIST_TAG do.
+  tag2sym toJXvector dat
+case. XT_LANG_NOTAG do.
+  toJXvector dat
+case. XT_LANG_TAG do.
+  tag2sym toJXvector dat
+case. XT_VECTOR_EXP do.
+  toJXvector dat
+case. XT_VECTOR_STR do.
+  toJXvector dat
 case. XT_ARRAY_INT do.
   _2 ic dat
 case. XT_ARRAY_DOUBLE do.
   _2 fc toNAJ dat
 case. XT_ARRAY_STR do.
-  dbstopme''
-  123
-  dat {.~ dat i. ALPH0
+   (dat=ALPH0) <;._2 dat
 case. XT_ARRAY_BOOL_UA do.
   ax dat
 case. XT_ARRAY_BOOL do.
   (_2 ic 4 {.dat) $ ax 4 }. dat
+case. XT_RAW do.  NB. 37 /* P  data: int(n),byte,byte,... */
+  throw 'XT_RAW not yet'
+case. XT_ARRAY_CPLX do. NB. 38 /* P  data: [n*16]double,double,... (Re,Im,Re,Im,...) */
+  throw 'XT_ARRAY_CPLX not yet'
 case. XT_UNKNOWN do.
   typ=. (INTNUM i. {. _2 ic dat) pick INTNAM
   'Type unsupported by socket interface: ',typ
@@ -581,7 +618,6 @@ len=. 8 + _2 ic (5 6 7 { y), ALPH0
 att=. toJX 4 }. len {. y
 dat=. len }. y
 dat=. toJX (typ,3 {.2 ic #dat),dat
-
 NB. ---------------------------------------------------------
 NB. apply any shape and remove it from attribute list
 NB. if shape is only attribute, return only dat
