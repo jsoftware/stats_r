@@ -1,0 +1,14 @@
+stats/r - change history
+
+== 1.0.2 ==
+ * support read of complex, raw datatypes
+ * add script test_rdsock.ijs
+
+== 1.0.1 ==
+ * upgrade to Rserve 0.5
+
+== 1.0.0 ==
+ * initial release
+
+
+

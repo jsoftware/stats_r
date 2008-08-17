@@ -51,39 +51,39 @@ NULL=: 'NULL'
 
 NB. =========================================================
 ax=: a.&i.
-atoi=: 256"_ #. a."_ i. |.
-av=: ({&a.)`] @. (2: = 3!:0)
+atoi=: 256 #. a. i. |.
+av=: ({&a.)`] @. (2 = 3!:0)
 firstones=: > (0: , }:)
 info=: wdinfo @ ('dsock'&;)
-ischar=: 2: = 3!:0
+ischar=: 2 = 3!:0
 isinteger=: (-: <.) ::0:
 isnan=: 128!:5
-issymbol=: 65536"_ = 3!:0
-round=: [ * [: <. 0.5"_ + %~
+issymbol=: 65536 = 3!:0
+round=: [ * [: <. 0.5 + %~
 roundint=: <. @ +&0.5
 roundup=: [ * [: >. %~
 
-NB. =========================================================
-NB. att2dict
-NB. make an attribute dictionary
-NB. this is a 2 col matrix: names,values
-NB. symbol names are converted to text names
-NB. nested names are hypenated (e.g. 'levels-class')
-att2dict=: 4 : 0
-; (issymbol &> y) x&att2dict1 ;.2 y
-)
-
-NB. =========================================================
-att2dict1=: 4 : 0
-nam=. x,3 s: _1 pick y
-bal=. }:y
-res=. ,:nam;{.bal
-bal=. }.bal
-if. #bal do.
-  res=. res,;(nam,'-')&att2dict each bal
-end.
-<res
-)
+NB. NB. =========================================================
+NB. NB. att2dict
+NB. NB. make an attribute dictionary
+NB. NB. this is a 2 col matrix: names,values
+NB. NB. symbol names are converted to text names
+NB. NB. nested names are hypenated (e.g. 'levels-class')
+NB. att2dict=: 4 : 0
+NB. ; (issymbol &> y) x&att2dict1 ;.2 y
+NB. )
+NB.
+NB. NB. =========================================================
+NB. att2dict1=: 4 : 0
+NB. nam=. x,3 s: _1 pick y
+NB. bal=. }:y
+NB. res=. ,:nam;{.bal
+NB. bal=. }.bal
+NB. if. #bal do.
+NB.   res=. res,;(nam,'-')&att2dict each bal
+NB. end.
+NB. <res
+NB. )
 
 NB. =========================================================
 NB.commasep v separates boxed items with comma
@@ -138,12 +138,11 @@ msg=. y
 if. ischar msg do. msg=. 1;msg end.
 thrown=: msg
 info 1 pick msg
-NB. throw.
+throw.
 )
 
 NB. =========================================================
 NB. wrap socket command
-NB. !!! not sure if this can exceed 2^24 in length
 wrapcmd=: 4 : 0
 cmd=. 2 ic x
 cnt=. #y
@@ -567,8 +566,7 @@ case. XT_SYM do.
 case. XT_BOOL do.
   , ax {. dat
 case. XT_S4 do.
-  smoutput 'XT_S4 not yet'
-  assert. 0
+  throw 'XT_S4 type not yet supported'
 case. XT_VECTOR do.
   toJXvector dat
 case. XT_LIST do.
@@ -594,15 +592,16 @@ case. XT_ARRAY_INT do.
 case. XT_ARRAY_DOUBLE do.
   _2 fc toNAJ dat
 case. XT_ARRAY_STR do.
-   (dat=ALPH0) <;._2 dat
+  (dat=ALPH0) <;._2 dat
 case. XT_ARRAY_BOOL_UA do.
   ax dat
 case. XT_ARRAY_BOOL do.
   (_2 ic 4 {.dat) $ ax 4 }. dat
-case. XT_RAW do.  NB. 37 /* P  data: int(n),byte,byte,... */
-  throw 'XT_RAW not yet'
-case. XT_ARRAY_CPLX do. NB. 38 /* P  data: [n*16]double,double,... (Re,Im,Re,Im,...) */
-  throw 'XT_ARRAY_CPLX not yet'
+case. XT_RAW do.
+  len=. _2 ic 4 {. dat
+  len {. 4 }. dat
+case. XT_ARRAY_CPLX do.
+  _2 j. /\ _2 fc toNAJ dat
 case. XT_UNKNOWN do.
   typ=. (INTNUM i. {. _2 ic dat) pick INTNAM
   'Type unsupported by socket interface: ',typ
@@ -618,9 +617,8 @@ len=. 8 + _2 ic (5 6 7 { y), ALPH0
 att=. toJX 4 }. len {. y
 dat=. len }. y
 dat=. toJX (typ,3 {.2 ic #dat),dat
-NB. ---------------------------------------------------------
 NB. apply any shape and remove it from attribute list
-NB. if shape is only attribute, return only dat
+NB. if shape is only attribute, return only dat:
 ndx=. att i. <s:<'dim'
 if. ndx < #att do.
   inx=. I. isinteger &> att

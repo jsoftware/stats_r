@@ -12,13 +12,14 @@ For more information, see wiki page http://www.jsoftware.com/jwiki/Interfaces/R 
 
 LABCATEGORY=: 'Stats'
 
-VERSION=: '1.0.1'
+VERSION=: '1.0.2'
 
-RELEASE=: 'j601 j602'
+RELEASE=: 'j602'
 
 FILES=: 0 : 0
 rdcmd.ijs
 rdcom.ijs
 rdsock.ijs
+test_rdsock.ijs
 )
 
