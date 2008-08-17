@@ -10,7 +10,7 @@ sdcleanup_jsocket_''
 
 NB. =========================================================
 test=: 3 : 0
-'' conew 'prdsock'
+a=. '' conew 'prdsock'
 
 assert. (o.1) = Rget'pi'
 assert. 1 2 3 4 -: Rget 'c(1,2,3,4)'
@@ -69,6 +69,7 @@ assert. 1 2.2 3 -: Rget 'abc'
 'abc' Rset i.2 3 4
 assert. (i.2 3 4) -: Rget 'abc'
 
+coerase a
 'test_rdsock done'
 )
 

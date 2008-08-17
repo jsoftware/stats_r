@@ -18,6 +18,7 @@ try.
   'host port'=. 2 {. boxopen y
   HOST=: host, (0=#host)#'localhost'
   PORT=: {. port,DEFPORT
+NB. for nonce HOST not used
 NB.   HOSTIP=: gethostip HOST
   HOSTIP=: 2;'127.0.0.1'
   SK=: sd_socket''
@@ -27,7 +28,7 @@ NB.   HOSTIP=: gethostip HOST
     1;res
   end.
   att=. _4 [\ (12 }. res) -. '-',CRLF
-NB. for nonce, expect no attributes:
+NB. expect no attributes:
   if. #att do.
     1;res
   else.
@@ -58,32 +59,13 @@ info=: wdinfo @ ('dsock'&;)
 ischar=: 2 = 3!:0
 isinteger=: (-: <.) ::0:
 isnan=: 128!:5
+isscalar=: 0 = #@$
 issymbol=: 65536 = 3!:0
 round=: [ * [: <. 0.5 + %~
 roundint=: <. @ +&0.5
 roundup=: [ * [: >. %~
-
-NB. NB. =========================================================
-NB. NB. att2dict
-NB. NB. make an attribute dictionary
-NB. NB. this is a 2 col matrix: names,values
-NB. NB. symbol names are converted to text names
-NB. NB. nested names are hypenated (e.g. 'levels-class')
-NB. att2dict=: 4 : 0
-NB. ; (issymbol &> y) x&att2dict1 ;.2 y
-NB. )
-NB.
-NB. NB. =========================================================
-NB. att2dict1=: 4 : 0
-NB. nam=. x,3 s: _1 pick y
-NB. bal=. }:y
-NB. res=. ,:nam;{.bal
-NB. bal=. }.bal
-NB. if. #bal do.
-NB.   res=. res,;(nam,'-')&att2dict each bal
-NB. end.
-NB. <res
-NB. )
+toscalar=: {.^:((,1) -: $)
+sym2str=: >@(5&s:) :: ]
 
 NB. =========================================================
 NB.commasep v separates boxed items with comma
@@ -283,7 +265,7 @@ XT_ARRAY_BOOL_UA=: 35 NB. data: [n]byte,byte,..  (unaligned! NOT supported anymo
 XT_ARRAY_BOOL=: 36    NB. data: int(n),byte,byte,...
 XT_UNKNOWN=: 48       NB. data: [4]int - SEXP type (as from TYPEOF(x))
 XT_LARGE=: 64         NB. new in 0102: length coded as 56-bit integer enlarging the header by 4 bytes
-XT_HAS_ATTR=: 128     NB. flag; if set, the following REXP is the attribute
+XT_HAS_ATTR=: 128     NB. flag; if set, the following SEXP is the attribute
 
 NB. =========================================================
 NB. error/status codes
@@ -387,6 +369,110 @@ if. 1 < #s do.
   s=. }. ; ',' ,each ": each s
   cmd 'dim(',x,')=c(',s,')'
 end.
+)
+
+
+NB. object
+NB.
+NB. rtoJobject converts an R SEXP object into a dictionary (or map)
+NB. i.e. a 2 column table of name;value pairs
+
+NB. =========================================================
+prefixnames=: 4 : 0
+if. 0=#x do.
+  y
+else.
+  ((<x,'.') ,each {."1 y),.{:"1 y
+end.
+)
+
+NB. =========================================================
+NB. convert r object to j dictionary
+rtoJobject=: 3 : 0
+res=. '' rtoJobject1 y
+if. isscalar res do.
+  >res
+else.
+  res /: {."1 res
+end.
+)
+
+NB. NB. =========================================================
+NB. NB. returns either a boxed scalar or a dictionary
+NB. rtoJobject1=: 4 : 0
+NB. if. (0 = L.y) +. (2 ~: #y) +. 1 < #$y do.
+NB.   <y return.
+NB. end.
+NB. pfx=. <x,(0<#x)#'.'
+NB. 'att dat'=. y
+NB. ndx=. att i. <s:<'names'
+NB. if. ndx < #att do.
+NB.   nms=. (ndx-1) pick att
+NB.   if. (#nms) ~: #dat do.
+NB.     throw 'Names do not match data' return.
+NB.   end.
+NB.   att=. (<<<ndx,ndx-1) { att
+NB.   nms=. pfx ,each nms
+NB.   if. 0 = L.dat do.
+NB.     res=. nms,.<"_1 dat
+NB.   else.
+NB.     dat=. nms rtoJobject1 each dat
+NB.     msk=. isscalar &> dat
+NB.     ndx=. I. msk
+NB.     res=. (ndx{nms),.ndx pick dat
+NB.     ndx=. I. -.msk
+NB.     res=. res,; ndx{dat
+NB.   end.
+NB. else.
+NB.   res=. ,:x;<dat
+NB. end.
+NB. if. #att do.
+NB.   att=. _2 |.\ att
+NB.   nms=. pfx ,each sym2str each {."1 att
+NB.   val=. {:"1 att
+NB.   ndx=. I. (0 < L.&> val) *. isscalar &> val
+NB.   val=. ({.&> ndx{val) ndx} val
+NB.   res=. res,nms,.val
+NB. end.
+NB. )
+NB.
+
+NB. =========================================================
+NB. returns a doubly-enclosed map
+toJXmap=: 4 : 0
+att=. x
+dat=. y
+ndx=. att i. <s:<'names'
+if. ndx < #att do.
+  nms=. (ndx-1) pick att
+  if. (#nms) ~: #dat do.
+    throw 'Names do not match data' return.
+  end.
+  att=. (<<<ndx,ndx-1) { att
+  if. 0 = L.dat do.
+    res=. nms,.<"_1 dat
+  else.
+    res=. nms ,. dat
+NB.     dat=. nms rtoJobject1 each dat
+NB.     dat=. nms ,. dat
+NB.     msk=. isscalar &> dat
+NB.     ndx=. I. msk
+NB.     res=. (ndx{nms),.ndx pick dat
+NB.     ndx=. I. -.msk
+NB.     res=. res,; ndx{dat
+  end.
+else.
+  res=. ,:'';<dat
+end.
+if. #att do.
+  att=. _2 |.\ att
+  nms=. sym2str each {."1 att
+  val=. {:"1 att
+  ndx=. I. (0 < L.&> val) *. isscalar &> val
+  val=. ({.&> ndx{val) ndx} val
+  res=. res,nms,.val
+end.
+<<res
 )
 
 
@@ -524,11 +610,11 @@ typ=. ax {. y
 dat=. hdr }. len {. y
 select. typ
 case. DT_INT do.
-  _2 ic dat
+  toscalar _2 ic dat
 case. DT_STRING do.
-  (dat i. ALPH0) {. dat
+  toscalar (dat i. ALPH0) {. dat
 case. DT_BYTESTREAM do.
-  dat
+  toscalar dat
 case. DT_SEXP do.
   dat=. toJX dat
 NB. ---------------------------------------------------------
@@ -553,18 +639,14 @@ dat=. 4 }. y
 select. typ
 case. XT_NULL do.
   NULL
-case. XT_INT do.
-  _2 ic dat
-case. XT_DOUBLE do.
-  _2 fc toNAJ dat
 case. XT_STR do.
-  (dat i. ALPH0) {. dat
+  toscalar (dat i. ALPH0) {. dat
 case. XT_LANG do.
   toJXlist dat
 case. XT_SYM do.
   s: <toJX dat
 case. XT_BOOL do.
-  , ax {. dat
+  toscalar  ax {. dat
 case. XT_S4 do.
   throw 'XT_S4 type not yet supported'
 case. XT_VECTOR do.
@@ -588,20 +670,20 @@ case. XT_VECTOR_EXP do.
 case. XT_VECTOR_STR do.
   toJXvector dat
 case. XT_ARRAY_INT do.
-  _2 ic dat
+  toscalar _2 ic dat
 case. XT_ARRAY_DOUBLE do.
-  _2 fc toNAJ dat
+  toscalar _2 fc toNAJ dat
 case. XT_ARRAY_STR do.
-  (dat=ALPH0) <;._2 dat
+  toscalar (dat=ALPH0) <;._2 dat
 case. XT_ARRAY_BOOL_UA do.
-  ax dat
+  toscalar ax dat
 case. XT_ARRAY_BOOL do.
-  (_2 ic 4 {.dat) $ ax 4 }. dat
+  toscalar (_2 ic 4 {.dat) $ ax 4 }. dat
 case. XT_RAW do.
   len=. _2 ic 4 {. dat
-  len {. 4 }. dat
+  toscalar len {. 4 }. dat
 case. XT_ARRAY_CPLX do.
-  _2 j. /\ _2 fc toNAJ dat
+  toscalar _2 j. /\ _2 fc toNAJ dat
 case. XT_UNKNOWN do.
   typ=. (INTNUM i. {. _2 ic dat) pick INTNAM
   'Type unsupported by socket interface: ',typ
@@ -609,6 +691,12 @@ case. do.
   throw 'unknown extended type: ',":typ
 end.
 )
+
+NB. unused types from V0.4:
+NB. case. XT_INT do.
+NB.    _2 ic dat
+NB. case. XT_DOUBLE do.
+NB.   toscalar _2 fc toNAJ dat
 
 NB. =========================================================
 toJXatt=: 3 : 0
@@ -632,7 +720,8 @@ if. ndx < #att do.
   end.
 end.
 NB. ---------------------------------------------------------
-att;<dat
+NB. att;<dat
+att toJXmap dat
 )
 
 NB. =========================================================
