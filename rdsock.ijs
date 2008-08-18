@@ -260,7 +260,7 @@ XT_LANG=: 4           NB. data: same as XT_LIST
 XT_SYM=: 5            NB. data: [n]char symbol name
 XT_BOOL=: 6           NB. data: [1] byte boolean (1=TRUE, 0=FALSE, 2=NA)
 XT_S4=: 7             NB. data: [0] ?
-XT_VECTOR=: 16        NB. data: [?]REXP
+XT_VECTOR=: 16        NB. data: [?]SEXP
 XT_LIST=: 17          NB. X head, X vals, X tag
 XT_CLOS=: 18          NB. X formals, X body  (closure)
 XT_SYMNAME=: 19       NB. same as XT_STR
@@ -313,6 +313,10 @@ NB. =========================================================
 NB. flatten result of toJX
 NB. removes unnecessary nesting and does toscalar
 flatJX=: 3 : 0
+dbstopme''
+'att dat'=. y
+if. 0=#att do. dat return. end.
+
 res=. '' flatJX1 y
 if. 1 = #res do.
   if. 0 = # > {.{.res do.
@@ -387,6 +391,7 @@ end.
 res
 
 )
+
 
 
 
@@ -613,21 +618,15 @@ case. DT_STRING do.
 case. DT_BYTESTREAM do.
   toscalar dat
 case. DT_SEXP do.
-  flatJX toJX dat
+  dat=. toJX dat
+  if. 1=#$dat do. 1 pick dat end.
 case. do.
   throw 'unknown type: ',":typ
 end.
 )
 
-NB. not used in Rserve:
-NB. case. DT_CHAR do.
-NB.   throw 'unexpected char type'
-NB. case. DT_DOUBLE do.
-NB.   throw 'unexpected double type'
-NB. case. DT_ARRAY do.
-NB.   throw 'unexpected array type'
-
 NB. =========================================================
+NB. returns: '';<data or package
 toJX=: 3 : 0
 typ=. ax {. y
 if. typ >: 128 do.
@@ -638,36 +637,94 @@ end.
 )
 
 NB. =========================================================
+NB. convert attribute/data pair
 NB. assume attribute pair are not themselves attribute lists
 toJXatt=: 3 : 0
+
 typ=. av 128 | ax {. y
 len=. 8 + _2 ic (5 6 7 { y), ALPH0
 att=. 4 }. len {. y
+dat=. len }. y
+dat=. (typ,3 {.2 ic #dat),dat
 
 NB. ---------------------------------------------------------
 NB. check attributes form usual dat;tag pattern:
 if. XT_LIST_TAG ~: ax {.att do.
   throw 'Unrecognized attribute list tag' return.
 end.
-dbstopme 180=#y
-att=. toJXval att
-dbstopme 1 e. (<s:<'dimnames') e. att
-ndx=. +: i.-:#att
-if. 0 e. (<'') = {.&> ndx{att do.
-  throw 'Unrecognized attribute list data' return.
-end.
-att=. ({: &> ndx{att) ndx} att
+att=. tag2sym toJXval att
 
 NB. ---------------------------------------------------------
-dat=. len }. y
-dat=. toJXval (typ,3 {.2 ic #dat),dat
+NB. try to resolve attributes:
+NB. ---------------------------------------------------------
+NB. dim attribute:
 ndx=. att i. <s:<'dim'
-if. ndx < #att do.
-  dim=. (ndx-1) pick att
-  dat=. _2 |: (|. dim) $ dat
+if. ifdim=. ndx < #att do.
+  dim=. 1 pick (ndx-1) pick att
+  dat=. toJX dat
+  if. 1 ~: #$dat do.
+    throw 'Invalid data for dim attribute' return.
+  end.
+  dat=. _2 |: (|. dim) $ 1 pick dat
+  res=. '';<dat
   att=. (<<<ndx-0 1) { att
+  if. 0=#att do. return. end.
 end.
-att;<dat
+
+NB. ---------------------------------------------------------
+NB. names attribute:
+ndx=. att i. <s:<'names'
+if. ifnames=. ndx < #att do.
+  nms=. 1 pick (ndx-1) pick att
+  att=. (<<<ndx-0 1) { att
+  if. XT_VECTOR = ax typ do.
+    dat=. toJXval dat
+    res=. ; nms prefixnames each dat
+  else.
+    dat=. toJXval dat
+    if. (#nms) ~: #dat do.
+      throw 'Names do not match data' return.
+    end.
+    if. 0 = L. dat do.
+      res=. nms,.<"_1 dat
+    else.
+      res=. ; nms,.dat
+    end.
+  end.
+end.
+
+NB. ---------------------------------------------------------
+NB. neither dim nor names (not both)
+if. -. ifdim +. ifnames do.
+  res=. toJX dat
+end.
+
+NB. ---------------------------------------------------------
+NB. known attributes:
+NB. ---------------------------------------------------------
+att=. _2 [\ att
+
+NB. ---------------------------------------------------------
+NB. do known attributes:
+kat=. ;: 'class dimnames'
+skat=. <&> s: kat
+aid=. {:"1 att
+ndx=. I. aid e. skat
+if. #ndx do.
+  dbstopme''
+  sel=. ((skat i. ndx{aid){kat),.{."1 ndx{att
+  res=. res, sel
+  att=. (<<<ndx) { att
+end.
+
+NB. ---------------------------------------------------------
+NB. get remaining attributes:
+for_d. att do.
+  'val hdr'=. d
+  res=. res, (sym2str hdr) flatJX1 val
+end.
+
+res
 )
 
 NB. =========================================================
@@ -713,11 +770,13 @@ case. XT_SYMNAME do.
 case. XT_LIST_NOTAG do.
   toJXlist dat
 case. XT_LIST_TAG do.
-  tag2sym toJXlist dat
+NB.   tag2sym toJXlist dat
+  toJXlist dat
 case. XT_LANG_NOTAG do.
   toJXlist dat
 case. XT_LANG_TAG do.
-  tag2sym toJXlist dat
+NB.   tag2sym toJXlist dat
+  toJXlist dat
 case. XT_VECTOR_EXP do.
   toJXlist dat
 case. XT_VECTOR_STR do.
@@ -744,12 +803,6 @@ case. do.
   throw 'unknown extended type: ',":typ
 end.
 )
-
-NB. unused types from V0.4:
-NB. case. XT_INT do.
-NB.    _2 ic dat
-NB. case. XT_DOUBLE do.
-NB.   _2 fc toNAJ dat
 
 NB. =========================================================
 toNAJ=: 3 : 0
