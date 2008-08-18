@@ -87,6 +87,15 @@ end.
 )
 
 NB. =========================================================
+prefixnames=: 4 : 0
+if. 0=#x do. y return. end.
+nms=. {."1 y
+msk=. 0 < #&> nms
+nms=. (<x) ,each (msk{'';'.') ,each nms
+nms,.{:"1 y
+)
+
+NB. =========================================================
 NB. returns hdrlen, overall len from data
 rhdrlen=: 3 : 0
 if. 64 < 128 | ax {. y do.
@@ -109,9 +118,14 @@ end.
 )
 
 NB. =========================================================
+NB. convert tags to symbols:
 tag2sym=: 3 : 0
 ndx=. >:+:i.<.-:#y
-(<&> s: ndx{y) ndx}y
+tag=. ndx { y
+if. 0 e. *./ (2 = # &> tag), (<'') = {.&> tag do.
+  throw 'Invalid tag list in SEXP' return.
+end.
+(<&> s: {:&> tag) ndx} y
 )
 
 NB. =========================================================
@@ -293,6 +307,89 @@ ERRMSG=: 3 }. each j
 ERRNUM=: 0 ". &> 2 {. each j
 
 
+NB. flat
+
+NB. =========================================================
+NB. flatten result of toJX
+NB. removes unnecessary nesting and does toscalar
+flatJX=: 3 : 0
+res=. '' flatJX1 y
+if. 1 = #res do.
+  if. 0 = # > {.{.res do.
+    1 pick {.res
+  end.
+else.
+  res /: {."1 res
+end.
+)
+
+NB. =========================================================
+flatJX1=: 4 : 0
+'att dat'=. y
+pfx=. x
+dat=. toscalar dat
+
+NB. ---------------------------------------------------------
+if. 0=#att do.
+  ,:pfx;dat return.
+end.
+
+NB. ---------------------------------------------------------
+NB. apply names attribute:
+ndx=. att i. <s:<'names'
+if. ndx = #att do.
+  res=. ,: '';<dat
+else.
+  nms=. (ndx-1) pick att
+  if. (#nms) ~: #dat do.
+    throw 'Names do not match data' return.
+  end.
+  att=. (<<<ndx-0 1) { att
+  if. 0 = L. dat do.
+    res=. nms,.<"_1 dat
+  else.
+NB.     res=. i.0 2
+NB.     for_i. i.#dat do.
+NB.       res=. res, (i pick nms) flatJX1 i pick dat
+NB.     end.
+    res=. ; nms flatJX1 each dat
+  end.
+end.
+
+NB. ---------------------------------------------------------
+att=. _2 [\ att
+
+NB. ---------------------------------------------------------
+NB. do known attributes:
+kat=. ;: 'class dimnames'
+skat=. <&> s: kat
+aid=. {:"1 att
+ndx=. I. aid e. skat
+if. #ndx do.
+dbstopme''
+  sel=. ((skat i. ndx{aid){kat),.{."1 ndx{att
+  res=. res, sel
+  att=. (<<<ndx) { att 
+end.
+
+NB. ---------------------------------------------------------
+NB. get remaining attributes:
+for_d. att do.
+  'val hdr'=. d
+  res=. res, (sym2str hdr) flatJX1 val
+end.
+
+NB. ---------------------------------------------------------
+if. #pfx do.
+  res=. pfx prefixnames res
+end.
+
+res
+
+)
+
+
+
 NB. methods
 NB.
 NB. all methods return a pair:
@@ -369,110 +466,6 @@ if. 1 < #s do.
   s=. }. ; ',' ,each ": each s
   cmd 'dim(',x,')=c(',s,')'
 end.
-)
-
-
-NB. object
-NB.
-NB. rtoJobject converts an R SEXP object into a dictionary (or map)
-NB. i.e. a 2 column table of name;value pairs
-
-NB. =========================================================
-prefixnames=: 4 : 0
-if. 0=#x do.
-  y
-else.
-  ((<x,'.') ,each {."1 y),.{:"1 y
-end.
-)
-
-NB. =========================================================
-NB. convert r object to j dictionary
-rtoJobject=: 3 : 0
-res=. '' rtoJobject1 y
-if. isscalar res do.
-  >res
-else.
-  res /: {."1 res
-end.
-)
-
-NB. NB. =========================================================
-NB. NB. returns either a boxed scalar or a dictionary
-NB. rtoJobject1=: 4 : 0
-NB. if. (0 = L.y) +. (2 ~: #y) +. 1 < #$y do.
-NB.   <y return.
-NB. end.
-NB. pfx=. <x,(0<#x)#'.'
-NB. 'att dat'=. y
-NB. ndx=. att i. <s:<'names'
-NB. if. ndx < #att do.
-NB.   nms=. (ndx-1) pick att
-NB.   if. (#nms) ~: #dat do.
-NB.     throw 'Names do not match data' return.
-NB.   end.
-NB.   att=. (<<<ndx,ndx-1) { att
-NB.   nms=. pfx ,each nms
-NB.   if. 0 = L.dat do.
-NB.     res=. nms,.<"_1 dat
-NB.   else.
-NB.     dat=. nms rtoJobject1 each dat
-NB.     msk=. isscalar &> dat
-NB.     ndx=. I. msk
-NB.     res=. (ndx{nms),.ndx pick dat
-NB.     ndx=. I. -.msk
-NB.     res=. res,; ndx{dat
-NB.   end.
-NB. else.
-NB.   res=. ,:x;<dat
-NB. end.
-NB. if. #att do.
-NB.   att=. _2 |.\ att
-NB.   nms=. pfx ,each sym2str each {."1 att
-NB.   val=. {:"1 att
-NB.   ndx=. I. (0 < L.&> val) *. isscalar &> val
-NB.   val=. ({.&> ndx{val) ndx} val
-NB.   res=. res,nms,.val
-NB. end.
-NB. )
-NB.
-
-NB. =========================================================
-NB. returns a doubly-enclosed map
-toJXmap=: 4 : 0
-att=. x
-dat=. y
-ndx=. att i. <s:<'names'
-if. ndx < #att do.
-  nms=. (ndx-1) pick att
-  if. (#nms) ~: #dat do.
-    throw 'Names do not match data' return.
-  end.
-  att=. (<<<ndx,ndx-1) { att
-  if. 0 = L.dat do.
-    res=. nms,.<"_1 dat
-  else.
-    res=. nms ,. dat
-NB.     dat=. nms rtoJobject1 each dat
-NB.     dat=. nms ,. dat
-NB.     msk=. isscalar &> dat
-NB.     ndx=. I. msk
-NB.     res=. (ndx{nms),.ndx pick dat
-NB.     ndx=. I. -.msk
-NB.     res=. res,; ndx{dat
-  end.
-else.
-  res=. ,:'';<dat
-end.
-if. #att do.
-  att=. _2 |.\ att
-  nms=. sym2str each {."1 att
-  val=. {:"1 att
-  ndx=. I. (0 < L.&> val) *. isscalar &> val
-  val=. ({.&> ndx{val) ndx} val
-  res=. res,nms,.val
-end.
-<<res
 )
 
 
@@ -567,6 +560,10 @@ send=: 3 : 'y sendsk SK'
 NB. toj
 NB.
 NB. convert R data to J
+NB.
+NB. SEXP is either data, or attributes;data
+
+tomap=: [: ,:'';<@toscalar
 
 NB. =========================================================
 NB. rread - read response from R
@@ -616,41 +613,97 @@ case. DT_STRING do.
 case. DT_BYTESTREAM do.
   toscalar dat
 case. DT_SEXP do.
-  dat=. toJX dat
-NB. ---------------------------------------------------------
-case. DT_CHAR do.
-  throw 'unexpected char type'
-case. DT_DOUBLE do.
-  throw 'unexpected double type'
-case. DT_ARRAY do.
-  throw 'unexpected array type'
+  flatJX toJX dat
 case. do.
   throw 'unknown type: ',":typ
 end.
 )
 
+NB. not used in Rserve:
+NB. case. DT_CHAR do.
+NB.   throw 'unexpected char type'
+NB. case. DT_DOUBLE do.
+NB.   throw 'unexpected double type'
+NB. case. DT_ARRAY do.
+NB.   throw 'unexpected array type'
+
 NB. =========================================================
 toJX=: 3 : 0
 typ=. ax {. y
 if. typ >: 128 do.
-  toJXatt y return.
+  toJXatt y
+else.
+  '';<toJXval y
 end.
+)
+
+NB. =========================================================
+NB. assume attribute pair are not themselves attribute lists
+toJXatt=: 3 : 0
+typ=. av 128 | ax {. y
+len=. 8 + _2 ic (5 6 7 { y), ALPH0
+att=. 4 }. len {. y
+
+NB. ---------------------------------------------------------
+NB. check attributes form usual dat;tag pattern:
+if. XT_LIST_TAG ~: ax {.att do.
+  throw 'Unrecognized attribute list tag' return.
+end.
+dbstopme 180=#y
+att=. toJXval att
+dbstopme 1 e. (<s:<'dimnames') e. att
+ndx=. +: i.-:#att
+if. 0 e. (<'') = {.&> ndx{att do.
+  throw 'Unrecognized attribute list data' return.
+end.
+att=. ({: &> ndx{att) ndx} att
+
+NB. ---------------------------------------------------------
+dat=. len }. y
+dat=. toJXval (typ,3 {.2 ic #dat),dat
+ndx=. att i. <s:<'dim'
+if. ndx < #att do.
+  dim=. (ndx-1) pick att
+  dat=. _2 |: (|. dim) $ dat
+  att=. (<<<ndx-0 1) { att
+end.
+att;<dat
+)
+
+NB. =========================================================
+toJXlist=: 3 : 0
+r=. ''
+dat=. y
+while.
+NB. remove spurious ALPH0s in representation:
+  dat=. (4 * (4 {. dat) -: 4$ALPH0) }. dat
+  #dat do.
+  'hdr len'=. rhdrlen dat
+  r=. r, <toJX len {. dat
+  dat=. len }. dat
+end.
+r
+)
+
+NB. =========================================================
+toJXval=: 3 : 0
+typ=. ax {. y
 dat=. 4 }. y
 select. typ
 case. XT_NULL do.
   NULL
 case. XT_STR do.
-  toscalar (dat i. ALPH0) {. dat
+  (dat i. ALPH0) {. dat
 case. XT_LANG do.
   toJXlist dat
 case. XT_SYM do.
-  s: <toJX dat
+  s: <toJXval dat
 case. XT_BOOL do.
-  toscalar  ax {. dat
+  ax {. dat
 case. XT_S4 do.
   throw 'XT_S4 type not yet supported'
 case. XT_VECTOR do.
-  toJXvector dat
+  toJXlist dat
 case. XT_LIST do.
   toJXlist dat
 case. XT_CLOS do.
@@ -658,32 +711,32 @@ case. XT_CLOS do.
 case. XT_SYMNAME do.
   (dat i. ALPH0) {. dat
 case. XT_LIST_NOTAG do.
-  toJXvector dat
+  toJXlist dat
 case. XT_LIST_TAG do.
-  tag2sym toJXvector dat
+  tag2sym toJXlist dat
 case. XT_LANG_NOTAG do.
-  toJXvector dat
+  toJXlist dat
 case. XT_LANG_TAG do.
-  tag2sym toJXvector dat
+  tag2sym toJXlist dat
 case. XT_VECTOR_EXP do.
-  toJXvector dat
+  toJXlist dat
 case. XT_VECTOR_STR do.
-  toJXvector dat
+  toJXlist dat
 case. XT_ARRAY_INT do.
-  toscalar _2 ic dat
+  _2 ic dat
 case. XT_ARRAY_DOUBLE do.
-  toscalar _2 fc toNAJ dat
+  _2 fc toNAJ dat
 case. XT_ARRAY_STR do.
-  toscalar (dat=ALPH0) <;._2 dat
+  (dat=ALPH0) <;._2 dat
 case. XT_ARRAY_BOOL_UA do.
-  toscalar ax dat
+  ax dat
 case. XT_ARRAY_BOOL do.
-  toscalar (_2 ic 4 {.dat) $ ax 4 }. dat
+  (_2 ic 4 {.dat) $ ax 4 }. dat
 case. XT_RAW do.
   len=. _2 ic 4 {. dat
-  toscalar len {. 4 }. dat
+  len {. 4 }. dat
 case. XT_ARRAY_CPLX do.
-  toscalar _2 j. /\ _2 fc toNAJ dat
+  _2 j. /\ _2 fc toNAJ dat
 case. XT_UNKNOWN do.
   typ=. (INTNUM i. {. _2 ic dat) pick INTNAM
   'Type unsupported by socket interface: ',typ
@@ -696,64 +749,7 @@ NB. unused types from V0.4:
 NB. case. XT_INT do.
 NB.    _2 ic dat
 NB. case. XT_DOUBLE do.
-NB.   toscalar _2 fc toNAJ dat
-
-NB. =========================================================
-toJXatt=: 3 : 0
-typ=. av 128 | ax {. y
-len=. 8 + _2 ic (5 6 7 { y), ALPH0
-att=. toJX 4 }. len {. y
-dat=. len }. y
-dat=. toJX (typ,3 {.2 ic #dat),dat
-NB. apply any shape and remove it from attribute list
-NB. if shape is only attribute, return only dat:
-ndx=. att i. <s:<'dim'
-if. ndx < #att do.
-  inx=. I. isinteger &> att
-  inx=. {: inx #~ inx < ndx
-  dat=. _2 |: dat $~ |. inx pick att
-  if. 2=#att do. dat return. end.
-  if. inx = <: ndx do.
-    att=. (<<<inx,ndx) { att
-  else.
-    att=. (<<<inx) { att
-  end.
-end.
-NB. ---------------------------------------------------------
-NB. att;<dat
-att toJXmap dat
-)
-
-NB. =========================================================
-toJXlist=: 3 : 0
-r=. ''
-dat=. y
-while.
-NB. not sure why some atts have extra ALPH0s in representation,
-NB. they do not seem significant:
-  if. (4 {. dat) -: 4$ALPH0 do.
-    dat=. 4 }. dat
-  end.
-  #dat do.
-  'hdr len'=. rhdrlen dat
-  r=. r, <toJX len {. dat
-  dat=. len }. dat
-end.
-r
-)
-
-NB. =========================================================
-NB. a vector is a list with all items of same type
-toJXvector=: 3 : 0
-r=. ''
-dat=. y
-while. #dat do.
-  'hdr len'=. rhdrlen dat
-  r=. r,<toJX len {. dat
-  dat=. len }. dat
-end.
-r
-)
+NB.   _2 fc toNAJ dat
 
 NB. =========================================================
 toNAJ=: 3 : 0
