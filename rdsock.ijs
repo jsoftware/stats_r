@@ -63,6 +63,7 @@ isnan=: 128!:5
 isscalar=: 0 = #@$
 issymbol=: 65536 = 3!:0
 notscalar=: 0 < #@$
+rflip=: _2 |: |.@$ $ ,
 round=: [ * [: <. 0.5 + %~
 roundint=: <. @ +&0.5
 roundup=: [ * [: >. %~
@@ -148,7 +149,6 @@ NB. =========================================================
 NB. convert tags to symbols:
 tag2sym=: 3 : 0
 ndx=. >:+:i.<.-:#y
-NB. (<&> s: ; ndx { y) ndx} y
 (<&> s: ndx { y) ndx} y
 )
 
@@ -425,6 +425,15 @@ catcht. thrown end.
 )
 
 NB. =========================================================
+NB. cmdrexp: with REXP response
+cmdrexp=: 3 : 0
+try.
+  send CMD_eval wrapcmd toRs ,y
+  rread 2
+catcht. thrown end.
+)
+
+NB. =========================================================
 NB. cmdraw
 NB.
 NB. send command string to R for execution, with raw response
@@ -446,8 +455,9 @@ SK=: ''
 )
 
 NB. =========================================================
-NB. get - identical to cmdr
+NB. get - identical to cmdr, getexp indentical to cmdrexp
 get=: cmdr
+getexp=: cmdrexp
 
 NB. =========================================================
 NB. set v name set value
@@ -560,9 +570,12 @@ NB.
 NB. convert R data to J
 NB.
 NB. SEXP is either data, or attributes;data
+NB.
+NB. ReadType is 1=dictionary, 2=REXP
 
 NB. =========================================================
 fixJX=: 3 : 0
+if. ReadType=2 do. y return. end.
 if. isscalar y do.
   openscalar y
 elseif.
@@ -577,7 +590,8 @@ end.
 NB. =========================================================
 NB. rread - read response from R
 NB.  y=0  only check response OK
-NB.     1  read rest of response
+NB.    1  read rest of response
+NB.    2  read response with attributes in REXP format
 rread=: 3 : 0
 res=. read''
 if. 1 ~: ax 2 { res do.
@@ -585,11 +599,9 @@ if. 1 ~: ax 2 { res do.
 end.
 rc=. _1 ic 2 {. res
 if. rc = 1 do.
-  if. y=0 do.
-    OK
-  else.
-    rtoJ 16 }. res
-  end.
+  if. y=0 do. OK return. end.
+  ReadType=: y
+  rtoJ 16 }. res
 else.
   throw 1;errormsg ax 3 { res
 end.
@@ -629,20 +641,30 @@ end.
 )
 
 NB. =========================================================
-NB. returns: '';<data or package
+NB. toJX
 toJX=: 3 : 0
 typ=. ax {. y
 if. typ >: 128 do.
   toJXatt y
 else.
-  <toJXval y
+  <^:(ReadType=1) toJXval y
 end.
 )
 
 NB. =========================================================
+toJXatt=: 3 : 0
+if. ReadType=1 do.
+  toJXattr y
+else.
+  toJXattrexp y
+end.
+)
+
+NB. =========================================================
+NB. toJXatt for cmdr
 NB. convert attribute/data pair
 NB. assume attribute pair are not themselves attribute lists
-toJXatt=: 3 : 0
+toJXattr=: 3 : 0
 
 typ=. av 128 | ax {. y
 len=. 8 + _2 ic (5 6 7 { y), ALPH0
@@ -658,7 +680,7 @@ end.
 
 att=. toJXval att
 if. 0 = #att do. toJX dat return. end.
-att=. tag2sym ;att  
+att=. tag2sym ;att
 
 NB. ---------------------------------------------------------
 NB. try to resolve attributes:
@@ -711,6 +733,32 @@ res, fixatt att
 )
 
 NB. =========================================================
+NB. toJXatt for cmdrexp
+NB. convert attribute/data pair
+NB. assume attribute pair are not themselves attribute lists
+toJXattrexp=: 3 : 0
+
+typ=. av 128 | ax {. y
+len=. 8 + _2 ic (5 6 7 { y), ALPH0
+att=. toJX 4 }. len {. y
+att=. tag2sym att
+dat=. len }. y
+dat=. toJX (typ,3 {.2 ic #dat),dat
+
+NB. ---------------------------------------------------------
+NB. dim attribute:
+ndx=. att i. <s:<'dim'
+if. ndx < #att do.
+  dim=. (ndx-1) pick att
+  dat=. _2 |: (|. dim) $ >dat
+  att=. (<<<ndx-0 1) { att
+  if. 0=#att do. dat return. end.
+end.
+
+att;<dat
+)
+
+NB. =========================================================
 toJXlist=: 3 : 0
 r=. ''
 dat=. y
@@ -749,7 +797,10 @@ case. XT_VECTOR do.
 case. XT_LIST do.
   toJXlist dat
 case. XT_CLOS do.
-  openscalars >toJX dat
+  res=. toJX dat
+  if. ReadType=1 do.
+    openscalars >res
+  end.
 case. XT_SYMNAME do.
   (dat i. ALPH0) {. dat
 case. XT_LIST_NOTAG do.
@@ -861,7 +912,9 @@ ZFNS1=: 0 : 0
 close
 cmd
 cmdr
+cmdrexp
 get
+getexp
 )
 
 NB. =========================================================

@@ -1,5 +1,10 @@
 stats/r - change history
 
+== 1.0.3/4 ==
+ * Rget now returns dictionary result
+ * Rgetexp returns old SEXP format
+ * 1-element lists now converted to scalars
+
 == 1.0.2 ==
  * support read of complex, raw datatypes
  * add script test_rdsock.ijs
