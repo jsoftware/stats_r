@@ -54,6 +54,7 @@ NB. =========================================================
 ax=: a.&i.
 atoi=: 256 #. a. i. |.
 av=: ({&a.)`] @. (2 = 3!:0)
+boxnotscalar=: < ^: (0 < #@$)
 firstones=: > (0: , }:)
 info=: wdinfo @ ('dsock'&;)
 ischar=: 2 = 3!:0
@@ -61,6 +62,7 @@ isinteger=: (-: <.) ::0:
 isnan=: 128!:5
 isscalar=: 0 = #@$
 issymbol=: 65536 = 3!:0
+notscalar=: 0 < #@$
 round=: [ * [: <. 0.5 + %~
 roundint=: <. @ +&0.5
 roundup=: [ * [: >. %~
@@ -87,7 +89,32 @@ end.
 )
 
 NB. =========================================================
+fixcell=: boxnotscalar @: (openscalar each) @: toscalar
+
+NB. =========================================================
+NB. open scalar
+NB. following fails if argument contains NAN
+NB. openscalar=: (>^:isscalar)^:_ 
+openscalar=: 3 : 0
+dat=. y
+while. (L.dat) *. 0 = #@$dat do. 
+  dat=. >dat
+end.
+)
+
+NB. =========================================================
+openscalars=: 3 : 0
+dat=. openscalar y
+for_i. 1 + i.L.dat do.
+  dat=. openscalar L:i dat
+end.
+)
+
+NB. =========================================================
 prefixnames=: 4 : 0
+if. isscalar y do. 
+  y=. '';<openscalar y 
+end.
 if. 0=#x do. y return. end.
 nms=. {."1 y
 msk=. 0 < #&> nms
@@ -121,11 +148,8 @@ NB. =========================================================
 NB. convert tags to symbols:
 tag2sym=: 3 : 0
 ndx=. >:+:i.<.-:#y
-tag=. ndx { y
-if. 0 e. *./ (2 = # &> tag), (<'') = {.&> tag do.
-  throw 'Invalid tag list in SEXP' return.
-end.
-(<&> s: {:&> tag) ndx} y
+NB. (<&> s: ; ndx { y) ndx} y
+(<&> s: ndx { y) ndx} y
 )
 
 NB. =========================================================
@@ -307,92 +331,61 @@ ERRMSG=: 3 }. each j
 ERRNUM=: 0 ". &> 2 {. each j
 
 
-NB. flat
+NB. att
 
 NB. =========================================================
-NB. flatten result of toJX
-NB. removes unnecessary nesting and does toscalar
-flatJX=: 3 : 0
-dbstopme''
-'att dat'=. y
-if. 0=#att do. dat return. end.
-
-res=. '' flatJX1 y
-if. 1 = #res do.
-  if. 0 = # > {.{.res do.
-    1 pick {.res
-  end.
-else.
-  res /: {."1 res
-end.
-)
-
-NB. =========================================================
-flatJX1=: 4 : 0
-'att dat'=. y
-pfx=. x
-dat=. toscalar dat
+fixatt=: 3 : 0
+res=. i. 0 2
+att=. _2 [\ y
 
 NB. ---------------------------------------------------------
-if. 0=#att do.
-  ,:pfx;dat return.
+cat=. ;: 'dimnames'
+sat=. <&> s:cat
+ndx=. ({:"1 att) i. sat
+msk=. ndx < #att
+if. 1 e. msk do.
+  ndx=. msk#ndx
+  res=. res, (msk#cat),.openscalar each each {."1 ndx{att
+  att=. (<<<ndx) { att
+  if. 0=#att do. res return. end.
 end.
 
 NB. ---------------------------------------------------------
-NB. apply names attribute:
-ndx=. att i. <s:<'names'
-if. ndx = #att do.
-  res=. ,: '';<dat
-else.
-  nms=. (ndx-1) pick att
-  if. (#nms) ~: #dat do.
-    throw 'Names do not match data' return.
-  end.
-  att=. (<<<ndx-0 1) { att
-  if. 0 = L. dat do.
-    res=. nms,.<"_1 dat
-  else.
-NB.     res=. i.0 2
-NB.     for_i. i.#dat do.
-NB.       res=. res, (i pick nms) flatJX1 i pick dat
-NB.     end.
-    res=. ; nms flatJX1 each dat
-  end.
+cat=. ;: 'levels'
+sat=. <&> s:cat
+ndx=. ({:"1 att) i. sat
+msk=. ndx < #att
+if. 1 e. msk do.
+  ndx=. msk#ndx
+  res=. res, (msk#cat),.{."1 ndx{att
+  att=. (<<<ndx) { att
+  if. 0=#att do. res return. end.
 end.
 
 NB. ---------------------------------------------------------
-att=. _2 [\ att
-
-NB. ---------------------------------------------------------
-NB. do known attributes:
-kat=. ;: 'class dimnames'
-skat=. <&> s: kat
-aid=. {:"1 att
-ndx=. I. aid e. skat
-if. #ndx do.
-dbstopme''
-  sel=. ((skat i. ndx{aid){kat),.{."1 ndx{att
-  res=. res, sel
-  att=. (<<<ndx) { att 
+NB. class:
+cat=. ;: 'class source'
+sat=. <&> s:cat
+ndx=. ({:"1 att) i. sat
+msk=. ndx < #att
+if. 1 e. msk do.
+  ndx=. msk#ndx
+  res=. res, (msk#cat),.; {."1 ndx{att
+  att=. (<<<ndx) { att
+  if. 0=#att do. res return. end.
 end.
 
 NB. ---------------------------------------------------------
 NB. get remaining attributes:
 for_d. att do.
   'val hdr'=. d
-  res=. res, (sym2str hdr) flatJX1 val
+  smoutput 'unknown att: ',>sym2str hdr
+  res=. res, ,:(sym2str hdr);fixcell val
 end.
 
 NB. ---------------------------------------------------------
-if. #pfx do.
-  res=. pfx prefixnames res
-end.
-
 res
-
 )
-
-
 
 
 NB. methods
@@ -568,7 +561,18 @@ NB. convert R data to J
 NB.
 NB. SEXP is either data, or attributes;data
 
-tomap=: [: ,:'';<@toscalar
+NB. =========================================================
+fixJX=: 3 : 0
+if. isscalar y do.
+  openscalar y
+elseif.
+  ndx=. (# &> {."1 y) i. 0
+  ndx < #y do.
+  (<'data') (<ndx;0)} y
+elseif. do.
+  y
+end.
+)
 
 NB. =========================================================
 NB. rread - read response from R
@@ -618,8 +622,7 @@ case. DT_STRING do.
 case. DT_BYTESTREAM do.
   toscalar dat
 case. DT_SEXP do.
-  dat=. toJX dat
-  if. 1=#$dat do. 1 pick dat end.
+  fixJX toJX dat
 case. do.
   throw 'unknown type: ',":typ
 end.
@@ -632,7 +635,7 @@ typ=. ax {. y
 if. typ >: 128 do.
   toJXatt y
 else.
-  '';<toJXval y
+  <toJXval y
 end.
 )
 
@@ -652,7 +655,10 @@ NB. check attributes form usual dat;tag pattern:
 if. XT_LIST_TAG ~: ax {.att do.
   throw 'Unrecognized attribute list tag' return.
 end.
-att=. tag2sym toJXval att
+
+att=. toJXval att
+if. 0 = #att do. toJX dat return. end.
+att=. tag2sym ;att  
 
 NB. ---------------------------------------------------------
 NB. try to resolve attributes:
@@ -660,22 +666,22 @@ NB. ---------------------------------------------------------
 NB. dim attribute:
 ndx=. att i. <s:<'dim'
 if. ifdim=. ndx < #att do.
-  dim=. 1 pick (ndx-1) pick att
+  dim=. (ndx-1) pick att
   dat=. toJX dat
-  if. 1 ~: #$dat do.
+  if. notscalar dat do.
     throw 'Invalid data for dim attribute' return.
   end.
-  dat=. _2 |: (|. dim) $ 1 pick dat
-  res=. '';<dat
+  dat=. _2 |: (|. dim) $ >dat
   att=. (<<<ndx-0 1) { att
-  if. 0=#att do. return. end.
+  if. 0=#att do. <dat return. end.
+  res=. '';<dat
 end.
 
 NB. ---------------------------------------------------------
 NB. names attribute:
 ndx=. att i. <s:<'names'
 if. ifnames=. ndx < #att do.
-  nms=. 1 pick (ndx-1) pick att
+  nms=. (ndx-1) pick att
   att=. (<<<ndx-0 1) { att
   if. XT_VECTOR = ax typ do.
     dat=. toJXval dat
@@ -691,40 +697,17 @@ if. ifnames=. ndx < #att do.
       res=. ; nms,.dat
     end.
   end.
+  if. 0=#att do. res return. end.
 end.
 
 NB. ---------------------------------------------------------
 NB. neither dim nor names (not both)
 if. -. ifdim +. ifnames do.
-  res=. toJX dat
+  res=. '';boxnotscalar toJX dat
 end.
 
 NB. ---------------------------------------------------------
-NB. known attributes:
-NB. ---------------------------------------------------------
-att=. _2 [\ att
-
-NB. ---------------------------------------------------------
-NB. do known attributes:
-kat=. ;: 'class dimnames'
-skat=. <&> s: kat
-aid=. {:"1 att
-ndx=. I. aid e. skat
-if. #ndx do.
-  dbstopme''
-  sel=. ((skat i. ndx{aid){kat),.{."1 ndx{att
-  res=. res, sel
-  att=. (<<<ndx) { att
-end.
-
-NB. ---------------------------------------------------------
-NB. get remaining attributes:
-for_d. att do.
-  'val hdr'=. d
-  res=. res, (sym2str hdr) flatJX1 val
-end.
-
-res
+res, fixatt att
 )
 
 NB. =========================================================
@@ -732,14 +715,16 @@ toJXlist=: 3 : 0
 r=. ''
 dat=. y
 while.
-NB. remove spurious ALPH0s in representation:
-  dat=. (4 * (4 {. dat) -: 4$ALPH0) }. dat
   #dat do.
   'hdr len'=. rhdrlen dat
   r=. r, <toJX len {. dat
   dat=. len }. dat
 end.
-r
+if. 1 = #r do.
+  0 pick r
+else.
+  r
+end.
 )
 
 NB. =========================================================
@@ -764,18 +749,16 @@ case. XT_VECTOR do.
 case. XT_LIST do.
   toJXlist dat
 case. XT_CLOS do.
-  toJX dat
+  openscalars >toJX dat
 case. XT_SYMNAME do.
   (dat i. ALPH0) {. dat
 case. XT_LIST_NOTAG do.
   toJXlist dat
 case. XT_LIST_TAG do.
-NB.   tag2sym toJXlist dat
   toJXlist dat
 case. XT_LANG_NOTAG do.
   toJXlist dat
 case. XT_LANG_TAG do.
-NB.   tag2sym toJXlist dat
   toJXlist dat
 case. XT_VECTOR_EXP do.
   toJXlist dat

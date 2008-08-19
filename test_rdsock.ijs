@@ -42,9 +42,9 @@ assert. v -: Rget 'x'
 
 NB. ---------------------------------------------------------
 Rcmd 'x=TRUE'
-assert. (,1) -: Rget 'x'
+assert. 1 -: Rget 'x'
 Rcmd 'x=FALSE'
-assert. (,0) -: Rget 'x'
+assert. 0 -: Rget 'x'
 Rcmd 'x=c(TRUE,FALSE,NA,TRUE,TRUE,FALSE)'
 assert. (1 0 2 1 1 0) -: Rget 'x'
 
@@ -52,11 +52,13 @@ NB. ---------------------------------------------------------
 Rcmd 'foo <- function(x,y) {x + 2 * y}'
 assert. (,<'closure') -: Rcmdr 'typeof(foo)'
 assert. 11 = Rcmdr 'foo(5,3)'
-assert. 'function(x,y) {x + 2 * y}' -: (0;0;0) {:: Rcmdr'foo'
+assert. 'function(x,y) {x + 2 * y}' -: 1 1 {:: Rcmdr'foo'
 
 NB. ---------------------------------------------------------
 Rcmd 'x=factor(c("one","two","three","four"))'
-d=. (<(;:' four one three two');(s:<'levels');((,<'factor');s:<'class')),<2 4 3 1
+d=. 'data';2 4 3 1
+d=. d,:'levels';<;:' four one three two'
+d=. d,;: 'class factor'
 assert. d -: Rget 'x'
 
 NB. ---------------------------------------------------------
