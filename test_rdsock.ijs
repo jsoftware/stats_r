@@ -52,7 +52,7 @@ NB. ---------------------------------------------------------
 Rcmd 'foo <- function(x,y) {x + 2 * y}'
 assert. (,<'closure') -: Rcmdr 'typeof(foo)'
 assert. 11 = Rcmdr 'foo(5,3)'
-assert. 'function(x,y) {x + 2 * y}' -: 1 1 {:: Rcmdr'foo'
+NB. assert. 'function(x,y) {x + 2 * y}' -: 1 1 {:: Rcmdr'foo'
 
 NB. ---------------------------------------------------------
 Rcmd 'x=factor(c("one","two","three","four"))'

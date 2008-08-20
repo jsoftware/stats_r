@@ -114,7 +114,7 @@ end.
 NB. =========================================================
 prefixnames=: 4 : 0
 if. isscalar y do. 
-  y=. '';<openscalar y 
+  y=. ,:'';<openscalar y 
 end.
 if. 0=#x do. y return. end.
 nms=. {."1 y
@@ -183,6 +183,8 @@ THROW=: ''
 
 NB. default port:
 DEFPORT=: 6311
+
+IFDEBUG=: 0
 
 NB. following is NA returned by R, this is
 NB. returned as the NA value (default __)
@@ -267,6 +269,10 @@ j=. <;._2 (0 : 0)
 
 INTNAM=: 3 }. each j
 INTNUM=: 0 ". &> 2 {. each j
+
+NB. =========================================================
+NB. special types
+XP_VEC=: _2147483648  NB. 1+i. list
 
 NB. =========================================================
 NB. expression types
@@ -376,15 +382,44 @@ if. 1 e. msk do.
 end.
 
 NB. ---------------------------------------------------------
+NB. row.names
+cat=. <'row.names'
+sat=. <&> s:cat
+ndx=. ({:"1 att) i. sat
+msk=. ndx < #att
+if. 1 e. msk do.
+  ndx=. msk#ndx
+  cat=. msk#cat
+  att=. {."1 ndx{att
+  ind=. I. isinteger &> att
+  att=. (fixxp each ind{att) ind} att
+  res=. res, cat,.att
+  att=. (<<<ndx) { att
+  if. 0=#att do. res return. end.
+end.
+
+NB. ---------------------------------------------------------
 NB. get remaining attributes:
 for_d. att do.
   'val hdr'=. d
-  smoutput 'unknown att: ',>sym2str hdr
+  if. IFDEBUG do.
+    smoutput 'unknown att: ',>sym2str hdr
+  end.
   res=. res, ,:(sym2str hdr);fixcell val
 end.
 
 NB. ---------------------------------------------------------
 res
+)
+
+NB. =========================================================
+fixxp=: 3 : 0
+select. {. y
+case. XP_VEC do.
+  1 + i.-1{y
+case. do.
+  y
+end.
 )
 
 
@@ -441,7 +476,7 @@ NB.
 NB. method intended for development only
 cmdraw=: 3 : 0
 try.
-  send wrapcmd y
+  send CMD_eval wrapcmd toRs ,y
   0;read ''
 catcht. thrown end.
 )
@@ -620,8 +655,6 @@ end.
 
 NB. =========================================================
 NB. toJ
-NB.
-NB. note only a few types are used in Rserve
 toJ=: 3 : 0
 typ=. ax {. y
 'hdr len'=. rhdrlen y
@@ -652,19 +685,10 @@ end.
 )
 
 NB. =========================================================
-toJXatt=: 3 : 0
-if. ReadType=1 do.
-  toJXattr y
-else.
-  toJXattrexp y
-end.
-)
-
-NB. =========================================================
-NB. toJXatt for cmdr
+NB. toJXatt
 NB. convert attribute/data pair
 NB. assume attribute pair are not themselves attribute lists
-toJXattr=: 3 : 0
+toJXatt=: 3 : 0
 
 typ=. av 128 | ax {. y
 len=. 8 + _2 ic (5 6 7 { y), ALPH0
@@ -678,9 +702,17 @@ if. XT_LIST_TAG ~: ax {.att do.
   throw 'Unrecognized attribute list tag' return.
 end.
 
+NB. ---------------------------------------------------------
+if. ReadType=2 do.
+  toJX each att;dat return.
+end.
+
+NB. ---------------------------------------------------------
 att=. toJXval att
 if. 0 = #att do. toJX dat return. end.
 att=. tag2sym ;att
+
+res=. i. 0 2
 
 NB. ---------------------------------------------------------
 NB. try to resolve attributes:
@@ -696,8 +728,9 @@ if. ifdim=. ndx < #att do.
   dat=. _2 |: (|. dim) $ >dat
   att=. (<<<ndx-0 1) { att
   if. 0=#att do. <dat return. end.
-  res=. '';<dat
+  res=. res,'';<dat
 end.
+
 
 NB. ---------------------------------------------------------
 NB. names attribute:
@@ -705,18 +738,20 @@ ndx=. att i. <s:<'names'
 if. ifnames=. ndx < #att do.
   nms=. (ndx-1) pick att
   att=. (<<<ndx-0 1) { att
+  res=. res,'names';<nms
+  nms=. (<'names.') ,each nms
   if. XT_VECTOR = ax typ do.
     dat=. toJXval dat
-    res=. ; nms prefixnames each dat
+    res=. res,; nms prefixnames each dat
   else.
     dat=. toJXval dat
     if. (#nms) ~: #dat do.
       throw 'Names do not match data' return.
     end.
     if. 0 = L. dat do.
-      res=. nms,.<"_1 dat
+      res=. res,nms,.<"_1 dat
     else.
-      res=. ; nms,.dat
+      res=. res,; nms,.dat
     end.
   end.
   if. 0=#att do. res return. end.
@@ -725,37 +760,11 @@ end.
 NB. ---------------------------------------------------------
 NB. neither dim nor names (not both)
 if. -. ifdim +. ifnames do.
-  res=. '';boxnotscalar toJX dat
+  res=. res,'';boxnotscalar toJX dat
 end.
 
 NB. ---------------------------------------------------------
 res, fixatt att
-)
-
-NB. =========================================================
-NB. toJXatt for cmdrexp
-NB. convert attribute/data pair
-NB. assume attribute pair are not themselves attribute lists
-toJXattrexp=: 3 : 0
-
-typ=. av 128 | ax {. y
-len=. 8 + _2 ic (5 6 7 { y), ALPH0
-att=. toJX 4 }. len {. y
-att=. tag2sym att
-dat=. len }. y
-dat=. toJX (typ,3 {.2 ic #dat),dat
-
-NB. ---------------------------------------------------------
-NB. dim attribute:
-ndx=. att i. <s:<'dim'
-if. ndx < #att do.
-  dim=. (ndx-1) pick att
-  dat=. _2 |: (|. dim) $ >dat
-  att=. (<<<ndx-0 1) { att
-  if. 0=#att do. dat return. end.
-end.
-
-att;<dat
 )
 
 NB. =========================================================

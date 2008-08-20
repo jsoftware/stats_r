@@ -1,5 +1,9 @@
 stats/r - change history
 
+== 1.0.5 ==
+ * improve names attribute result in Rget
+ * Rgetexp returns all attributes unchanged
+
 == 1.0.3/4 ==
  * Rget now returns dictionary result
  * Rgetexp returns old SEXP format
