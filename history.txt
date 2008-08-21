@@ -1,5 +1,8 @@
 stats/r - change history
 
+== 1.0.6 ==
+ * Rgettree returns tree format
+
 == 1.0.5 ==
  * improve names attribute result in Rget
  * Rgetexp returns all attributes unchanged
