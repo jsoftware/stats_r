@@ -104,11 +104,14 @@ end.
 
 NB. =========================================================
 prefixnames=: 4 : 0
-if. -. ismatrix y do.
-  ,:x;<y return. 
+if. (isopen y) >: ismatrix y do.
+  ,:x;<y return.
 end.
 if. 0=#x do. y return. end.
 nms=. {."1 y
+if. 0 e. ischar &> nms do.
+  ,:x;<y return.
+end.
 msk=. 0 < #&> nms
 nms=. (<x) ,each (msk{'';'.') ,each nms
 nms,.{:"1 y

@@ -1,5 +1,8 @@
 stats/r - change history
 
+== 1.0.8 ==
+ * bugfix
+ 
 == 1.0.6/7 ==
  * Rgettree returns tree format
 
