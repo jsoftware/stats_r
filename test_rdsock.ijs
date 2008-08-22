@@ -50,15 +50,15 @@ assert. (1 0 2 1 1 0) -: Rget 'x'
 
 NB. ---------------------------------------------------------
 Rcmd 'foo <- function(x,y) {x + 2 * y}'
-assert. (,<'closure') -: Rcmdr 'typeof(foo)'
+assert. 'closure' -: Rcmdr 'typeof(foo)'
 assert. 11 = Rcmdr 'foo(5,3)'
 NB. assert. 'function(x,y) {x + 2 * y}' -: 1 1 {:: Rcmdr'foo'
 
 NB. ---------------------------------------------------------
 Rcmd 'x=factor(c("one","two","three","four"))'
-d=. 'data';2 4 3 1
-d=. d,:'levels';<;:' four one three two'
-d=. d,;: 'class factor'
+d=. ;: 'class factor'
+d=. d,:'data';2 4 3 1
+d=. d,'levels';<;:' four one three two'
 assert. d -: Rget 'x'
 
 NB. ---------------------------------------------------------

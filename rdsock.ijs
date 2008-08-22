@@ -54,31 +54,22 @@ NB. =========================================================
 ax=: a.&i.
 atoi=: 256 #. a. i. |.
 av=: ({&a.)`] @. (2 = 3!:0)
-boxnotscalar=: < ^: (0 < #@$)
-firstones=: > (0: , }:)
 info=: wdinfo @ ('dsock'&;)
+isboxed=: 0 < L.
 ischar=: 2 = 3!:0
 isinteger=: (-: <.) ::0:
+ismatrix=: 2 = #@$
+isopen=: 0 = L.
 isnan=: 128!:5
 isscalar=: 0 = #@$
 issymbol=: 65536 = 3!:0
-notscalar=: 0 < #@$
 rflip=: _2 |: |.@$ $ ,
 round=: [ * [: <. 0.5 + %~
 roundint=: <. @ +&0.5
 roundup=: [ * [: >. %~
-toscalar=: {.^:((,1) -: $)
 sym2str=: >@(5&s:) :: ]
-
-NB. =========================================================
-NB.commasep v separates boxed items with comma
-commasep=: 3 : 0
-if. L. y do.
-  }. ; (','&, @ ":) each y
-else.
-  , ": y
-end.
-)
+symsort=: ":@(2 = 3!:0) , >@(5&s:) ::]
+toscalar=: {.^:((,1) -: $)
 
 NB. =========================================================
 errormsg=: 3 : 0
@@ -90,31 +81,31 @@ end.
 )
 
 NB. =========================================================
-fixcell=: boxnotscalar @: (openscalar each) @: toscalar
-
-NB. =========================================================
-NB. open scalar
-NB. following fails if argument contains NAN
-NB. openscalar=: (>^:isscalar)^:_ 
-openscalar=: 3 : 0
-dat=. y
-while. (L.dat) *. 0 = #@$dat do. 
-  dat=. >dat
-end.
+NB. fixscalar
+NB. convert to scalar and open if possible
+NB. explicit form avoids problems with NAN in result
+NB. fixscalar=: >@{.^:((1 = #) *. 2 > #@$)^:_
+fixscalar=: 3 : 0
+if. isnan y do. y return. end.
+if. (1=#y) *: 2 > #$y do. y return. end.
+r=. > {. y
+if. -. r -: y do. fixscalar r end.
 )
 
 NB. =========================================================
-openscalars=: 3 : 0
-dat=. openscalar y
-for_i. 1 + i.L.dat do.
-  dat=. openscalar L:i dat
+fixxp=: 3 : 0
+select. {. y
+case. XP_VEC do.
+  1 + i.-1{y
+case. do.
+  y
 end.
 )
 
 NB. =========================================================
 prefixnames=: 4 : 0
-if. isscalar y do. 
-  y=. ,:'';<openscalar y 
+if. -. ismatrix y do.
+  ,:x;<y return. 
 end.
 if. 0=#x do. y return. end.
 nms=. {."1 y
@@ -172,7 +163,6 @@ cmd,(2 ic len),(8#ALPH0),y,(len-cnt)$ALPH0
 
 NB. =========================================================
 wraplen=: 4 : '(x rtyplen #y),y'
-
 
 
 NB. defs
@@ -337,90 +327,146 @@ ERRMSG=: 3 }. each j
 ERRNUM=: 0 ". &> 2 {. each j
 
 
-NB. att
+NB. map
+
+sData=: <s:<'data'
+sDim=: <s:<'dim'
+sNames=: <s:<'names'
+sRownames=: <s:<'row.names'
 
 NB. =========================================================
-fixatt=: 3 : 0
-res=. i. 0 2
-att=. _2 [\ y
+NB. att2map
+NB. globals:
+NB.  IfAtt if result has attributes, and not just data.
+NB.  IfTree if tree format
+att2map=: 3 : 0
+IfAtt=: 0
+IfTree=: 0
+att2rep y
+)
 
-NB. ---------------------------------------------------------
-cat=. ;: 'dimnames'
-sat=. <&> s:cat
-ndx=. ({:"1 att) i. sat
-msk=. ndx < #att
-if. 1 e. msk do.
-  ndx=. msk#ndx
-  res=. res, (msk#cat),.openscalar each each {."1 ndx{att
-  att=. (<<<ndx) { att
-  if. 0=#att do. res return. end.
-end.
+NB. =========================================================
+NB. att2tree
+att2tree=: 3 : 0
+IfAtt=: 0
+IfTree=: 1
+att2rep y
+)
 
-NB. ---------------------------------------------------------
-cat=. ;: 'levels'
-sat=. <&> s:cat
-ndx=. ({:"1 att) i. sat
-msk=. ndx < #att
-if. 1 e. msk do.
-  ndx=. msk#ndx
-  res=. res, (msk#cat),.{."1 ndx{att
-  att=. (<<<ndx) { att
-  if. 0=#att do. res return. end.
-end.
-
-NB. ---------------------------------------------------------
-NB. class:
-cat=. ;: 'class source'
-sat=. <&> s:cat
-ndx=. ({:"1 att) i. sat
-msk=. ndx < #att
-if. 1 e. msk do.
-  ndx=. msk#ndx
-  res=. res, (msk#cat),.; {."1 ndx{att
-  att=. (<<<ndx) { att
-  if. 0=#att do. res return. end.
-end.
-
-NB. ---------------------------------------------------------
-NB. row.names
-cat=. <'row.names'
-sat=. <&> s:cat
-ndx=. ({:"1 att) i. sat
-msk=. ndx < #att
-if. 1 e. msk do.
-  ndx=. msk#ndx
-  cat=. msk#cat
-  att=. {."1 ndx{att
-  ind=. I. isinteger &> att
-  att=. (fixxp each ind{att) ind} att
-  res=. res, cat,.att
-  att=. (<<<ndx) { att
-  if. 0=#att do. res return. end.
-end.
-
-NB. ---------------------------------------------------------
-NB. get remaining attributes:
-for_d. att do.
-  'val hdr'=. d
-  if. IFDEBUG do.
-    smoutput 'unknown att: ',>sym2str hdr
+NB. =========================================================
+att2rep=: 3 : 0
+dat=. att2rep1 y
+if. -.IfAtt do. return. end.
+if. IfTree do.
+  dat /: symsort each {."1 dat
+else.
+  ndx=. 1 i.~ 0 = # &> {."1 dat
+  if. ndx < #y do.
+    dat=. (<'data') (<ndx;0)} dat
   end.
-  res=. res, ,:(sym2str hdr);fixcell val
+  dat /: {."1 dat
 end.
-
-NB. ---------------------------------------------------------
-res
 )
 
 NB. =========================================================
-fixxp=: 3 : 0
-select. {. y
-case. XP_VEC do.
-  1 + i.-1{y
-case. do.
-  y
+att2rep1=: 3 : 0
+if. -. ismatrix y do.
+  if. isopen y do.
+    y
+  else.
+    att2rep1 each y
+  end.
+  return.
 end.
+
+'att dat'=. att2rep1 each ,y
+
+if. -. ismatrix att do.
+  if. 2 | #att do.
+    throw 'Invalid attribute list - not in value;attribute pairs'
+  end.
+  att=. _2 |.\ att
+end.
+
+NB. ---------------------------------------------------------
+NB. dim
+ndx=. ({."1 att) i. sDim
+if. ndx<#att do.
+  dim=. 1 pick ndx{att
+  att=. (<<<ndx){att
+  dat=. _2 |: (|. dim) $ dat
+  if. 0=#att do. dat return. end.
+end.
+
+NB. ---------------------------------------------------------
+IfAtt=: 1
+
+NB. ---------------------------------------------------------
+NB. names attribute:
+ndx=. ({."1 att) i. sNames
+if. ndx = #att do.
+  if. IfTree do.
+    res=. ,:sData,<dat
+  else.
+    res=. ,:'';<dat
+  end.
+else.
+  nms=. boxxopen 1 pick ndx { att
+  att=. (<<<ndx) { att
+  if. 1 = #nms do.
+    dat=. boxxopen dat
+  else.
+    if. (#nms) ~: #dat do.
+      throw 'Names do not match data' return.
+    end.
+    if. 0 = L. dat do.
+      dat=. <"_1 dat
+    end.
+  end.
+  nms=. nms -.each '.'
+NB.   res=. ,:'names';<nms
+NB.   nms=. (<'names.') ,each nms
+  res=. i.0 2
+  if. IfTree do.
+    res=. res,nms,.dat
+  else.
+    res=. res,;nms prefixnames each dat
+  end.
+end.
+
+NB. ---------------------------------------------------------
+NB. row.names attribute
+ndx=. ({."1 att) i. sRownames
+if. ndx < #att do.
+  ind=. <ndx;1
+  att=. (<fixxp >ind{att) ind}att
+end.
+
+NB. ---------------------------------------------------------
+if. -. IfTree do.
+  nms=. sym2str each {."1 att
+  nms=. nms -. each '.'
+  att=. flatt nms,.{:"1 att
+end.
+
+NB. ---------------------------------------------------------
+res,att
 )
+
+NB. =========================================================
+flatt=: 3 : 0
+msk=. 2 = #@$ &> {:"1 y
+if. -. 1 e. msk do. y return. end.
+((-.msk) # y),;flatt1"1 msk # y
+
+)
+
+NB. =========================================================
+flatt1=: 3 : 0
+'nam mat'=. y
+<nam prefixnames mat
+)
+
 
 
 NB. methods
@@ -451,11 +497,11 @@ catcht. thrown end.
 )
 
 NB. =========================================================
-NB. cmdr: with response
+NB. cmdr: with map response
 cmdr=: 3 : 0
 try.
   send CMD_eval wrapcmd toRs ,y
-  rread 1
+  rread 2
 catcht. thrown end.
 )
 
@@ -464,7 +510,16 @@ NB. cmdrexp: with REXP response
 cmdrexp=: 3 : 0
 try.
   send CMD_eval wrapcmd toRs ,y
-  rread 2
+  rread 1
+catcht. thrown end.
+)
+
+NB. =========================================================
+NB. cmdr: with tree response
+cmdrtree=: 3 : 0
+try.
+  send CMD_eval wrapcmd toRs ,y
+  rread 3
 catcht. thrown end.
 )
 
@@ -493,6 +548,7 @@ NB. =========================================================
 NB. get - identical to cmdr, getexp indentical to cmdrexp
 get=: cmdr
 getexp=: cmdrexp
+gettree=: cmdrtree
 
 NB. =========================================================
 NB. set v name set value
@@ -605,52 +661,36 @@ NB.
 NB. convert R data to J
 NB.
 NB. SEXP is either data, or attributes;data
-NB.
-NB. ReadType is 1=dictionary, 2=REXP
-
-NB. =========================================================
-fixJX=: 3 : 0
-if. ReadType=2 do. y return. end.
-if. isscalar y do.
-  openscalar y
-elseif.
-  ndx=. (# &> {."1 y) i. 0
-  ndx < #y do.
-  (<'data') (<ndx;0)} y
-elseif. do.
-  y
-end.
-)
 
 NB. =========================================================
 NB. rread - read response from R
 NB.  y=0  only check response OK
-NB.    1  read rest of response
-NB.    2  read response with attributes in REXP format
+NB.    1  read SEXP format
+NB.    2  read map format
+NB.    3  read tree format
 rread=: 3 : 0
 res=. read''
 if. 1 ~: ax 2 { res do.
-  throw 1;'invalid response flag'
+  throw 'invalid response flag'
 end.
 rc=. _1 ic 2 {. res
 if. rc = 1 do.
   if. y=0 do. OK return. end.
-  ReadType=: y
-  rtoJ 16 }. res
+  res=. 16 }. res
+  if. 0 = #res do.
+    throw 'no data'
+  end.
+  res=. toJ res
+  select. y
+  case. 2 do.
+    res=. att2map res
+  case. 3 do.
+    res=. att2tree res
+  end.
+  0;<res
 else.
-  throw 1;errormsg ax 3 { res
+  throw errormsg ax 3 { res
 end.
-)
-
-NB. =========================================================
-NB. convert R data to J
-NB.
-NB. return returncode;result
-rtoJ=: 3 : 0
-if. 0 = #y do.
-  throw 1;'no data'
-end.
-0;<toJ y
 )
 
 NB. =========================================================
@@ -667,7 +707,7 @@ case. DT_STRING do.
 case. DT_BYTESTREAM do.
   toscalar dat
 case. DT_SEXP do.
-  fixJX toJX dat
+  toJX dat
 case. do.
   throw 'unknown type: ',":typ
 end.
@@ -680,92 +720,22 @@ typ=. ax {. y
 if. typ >: 128 do.
   toJXatt y
 else.
-  <^:(ReadType=1) toJXval y
+  fixscalar toJXval y
 end.
 )
 
 NB. =========================================================
 NB. toJXatt
 NB. convert attribute/data pair
-NB. assume attribute pair are not themselves attribute lists
 toJXatt=: 3 : 0
-
 typ=. av 128 | ax {. y
 len=. 8 + _2 ic (5 6 7 { y), ALPH0
 att=. 4 }. len {. y
 dat=. len }. y
 dat=. (typ,3 {.2 ic #dat),dat
-
-NB. ---------------------------------------------------------
-NB. check attributes form usual dat;tag pattern:
-if. XT_LIST_TAG ~: ax {.att do.
-  throw 'Unrecognized attribute list tag' return.
-end.
-
-NB. ---------------------------------------------------------
-if. ReadType=2 do.
-  toJX each att;dat return.
-end.
-
-NB. ---------------------------------------------------------
-att=. toJXval att
-if. 0 = #att do. toJX dat return. end.
-att=. tag2sym ;att
-
-res=. i. 0 2
-
-NB. ---------------------------------------------------------
-NB. try to resolve attributes:
-NB. ---------------------------------------------------------
-NB. dim attribute:
-ndx=. att i. <s:<'dim'
-if. ifdim=. ndx < #att do.
-  dim=. (ndx-1) pick att
-  dat=. toJX dat
-  if. notscalar dat do.
-    throw 'Invalid data for dim attribute' return.
-  end.
-  dat=. _2 |: (|. dim) $ >dat
-  att=. (<<<ndx-0 1) { att
-  if. 0=#att do. <dat return. end.
-  res=. res,'';<dat
-end.
-
-
-NB. ---------------------------------------------------------
-NB. names attribute:
-ndx=. att i. <s:<'names'
-if. ifnames=. ndx < #att do.
-  nms=. (ndx-1) pick att
-  att=. (<<<ndx-0 1) { att
-  res=. res,'names';<nms
-  nms=. (<'names.') ,each nms
-  if. XT_VECTOR = ax typ do.
-    dat=. toJXval dat
-    res=. res,; nms prefixnames each dat
-  else.
-    dat=. toJXval dat
-    if. (#nms) ~: #dat do.
-      throw 'Names do not match data' return.
-    end.
-    if. 0 = L. dat do.
-      res=. res,nms,.<"_1 dat
-    else.
-      res=. res,; nms,.dat
-    end.
-  end.
-  if. 0=#att do. res return. end.
-end.
-
-NB. ---------------------------------------------------------
-NB. neither dim nor names (not both)
-if. -. ifdim +. ifnames do.
-  res=. res,'';boxnotscalar toJX dat
-end.
-
-NB. ---------------------------------------------------------
-res, fixatt att
+,:toJX each att;dat
 )
+
 
 NB. =========================================================
 toJXlist=: 3 : 0
@@ -777,11 +747,7 @@ while.
   r=. r, <toJX len {. dat
   dat=. len }. dat
 end.
-if. 1 = #r do.
-  0 pick r
-else.
-  r
-end.
+r
 )
 
 NB. =========================================================
@@ -806,20 +772,17 @@ case. XT_VECTOR do.
 case. XT_LIST do.
   toJXlist dat
 case. XT_CLOS do.
-  res=. toJX dat
-  if. ReadType=1 do.
-    openscalars >res
-  end.
+  toJX dat
 case. XT_SYMNAME do.
   (dat i. ALPH0) {. dat
 case. XT_LIST_NOTAG do.
   toJXlist dat
 case. XT_LIST_TAG do.
-  toJXlist dat
+  tag2sym toJXlist dat
 case. XT_LANG_NOTAG do.
   toJXlist dat
 case. XT_LANG_TAG do.
-  toJXlist dat
+  tag2sym toJXlist dat
 case. XT_VECTOR_EXP do.
   toJXlist dat
 case. XT_VECTOR_STR do.
@@ -922,8 +885,10 @@ close
 cmd
 cmdr
 cmdrexp
+cmdrtree
 get
 getexp
+gettree
 )
 
 NB. =========================================================
