@@ -1,4 +1,4 @@
-NB. built from project: ~Public/r/dcmd/dcmd
+NB. built from project: ~R/dcmd/dcmd
 NB. init
 
 script_z_ '~system/main/files.ijs'

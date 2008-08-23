@@ -1,4 +1,4 @@
-NB. built from project: ~Public/r/dcom/dcom
+NB. built from project: ~R/dcom/dcom
 NB. init
 
 script_z_ '~system/main/strings.ijs'
