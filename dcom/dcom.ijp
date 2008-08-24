@@ -1,0 +1,43 @@
+NB. project file: e:\deb\public\r\dcom\dcom
+
+coclass 'jproject'
+
+PRIMARYFILES=: 0 : 0
+~R\dcom\init
+~R\dcmd\util
+~R\dcom\cmd
+~R\dcom\zfns
+)
+
+PRIMARYLIBS=: 'strings'
+
+DEVFILES=: ''
+
+DEVLIBS=: ''
+
+OTHERFILES=: 0 : 0
+~R\dcom\test0.ijs
+~R\dcom\test1.ijs
+)
+
+TARGETFILE=: '~R\dcom\rdcom.ijs'
+
+TARGETLOCALE=: 'prdcom'
+
+TARGETHEADER=: ''
+
+TARGETEXTRA=: ''
+
+BUILDOPTS=: 0 1 0 0 0 0 0
+
+PREBUILDFILE=: ''
+
+POSTBUILDFILE=: '~R\dcom\save.ijs'
+
+TESTFILE=: '~R\dcom\test.ijs'
+
+NOTES=: ''
+
+WINDOWS=: ''
+
+WINDOWSTATE=: 0

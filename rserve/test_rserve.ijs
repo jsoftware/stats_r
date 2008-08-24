@@ -1,4 +1,4 @@
-NB. test_rdsock
+NB. test_rserve
 NB.
 NB. test the Rserve socket connection
 NB.
@@ -10,12 +10,12 @@ sdcleanup_jsocket_''
 
 NB. =========================================================
 test=: 3 : 0
-a=. '' conew 'prdsock'
+Ropen''
 
 assert. (o.1) = Rget'pi'
 assert. 1 2 3 4 -: Rget 'c(1,2,3,4)'
 assert. (1 2 _ __ __) -: Rget 'c(1,2,Inf,-Inf,NA)'
-assert. isnan_prdsock_ -: Rget 'NaN'
+assert. isnan_rserve_ -: Rget 'NaN'
 
 Rcmd 'x = 1:24'
 Rcmd 'dim(x) = c(2,3,4)'
@@ -26,9 +26,9 @@ Rcmd 'dim(x)=c(2,4)'
 assert. (|:1.23+1+i.4 2) -: Rget 'x'
 
 NB. ---------------------------------------------------------
-assert. (2 j. _3+|: i.4 3) -: Rcmdr '2 + 1i * matrix(-3:8,nrow=3)'
+assert. (2 j. _3+|: i.4 3) -: Rget '2 + 1i * matrix(-3:8,nrow=3)'
 
-assert. 'abc 123' -: Rcmdr 'charToRaw("abc 123")'
+assert. 'abc 123' -: Rget 'charToRaw("abc 123")'
 
 NB. ---------------------------------------------------------
 Rcmd 'x = c("a","b","c","d","e","f","g","h")'
@@ -50,9 +50,9 @@ assert. (1 0 2 1 1 0) -: Rget 'x'
 
 NB. ---------------------------------------------------------
 Rcmd 'foo <- function(x,y) {x + 2 * y}'
-assert. 'closure' -: Rcmdr 'typeof(foo)'
-assert. 11 = Rcmdr 'foo(5,3)'
-NB. assert. 'function(x,y) {x + 2 * y}' -: 1 1 {:: Rcmdr'foo'
+assert. 'closure' -: Rget 'typeof(foo)'
+assert. 11 = Rget 'foo(5,3)'
+NB. assert. 'function(x,y) {x + 2 * y}' -: 1 1 {:: Rget'foo'
 
 NB. ---------------------------------------------------------
 Rcmd 'x=factor(c("one","two","three","four"))'
@@ -71,8 +71,8 @@ assert. 1 2.2 3 -: Rget 'abc'
 'abc' Rset i.2 3 4
 assert. (i.2 3 4) -: Rget 'abc'
 
-coerase a
-'test_rdsock done'
+Rclose''
+'test_rserve done'
 )
 
 smoutput test''

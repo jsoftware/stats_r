@@ -11,4 +11,8 @@ coclass 'rbase'
 
 coinsert 'rserve'
 
+NB. util
 
+NB. =========================================================
+NB. R range
+range=: <./ , >./

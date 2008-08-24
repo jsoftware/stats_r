@@ -1,0 +1,41 @@
+NB. project file: /home/chris/dev/apps/beta/source/r/rbase/rbase
+
+coclass 'jproject'
+
+PRIMARYFILES=: 0 : 0
+~R/rbase/init
+~R/rbase/util
+)
+
+PRIMARYLIBS=: 0 : 0
+map
+pack
+)
+
+DEVFILES=: ''
+
+DEVLIBS=: ''
+
+OTHERFILES=: '~R/rbase/test0.ijs'
+
+TARGETFILE=: '~R/rbase.ijs'
+
+TARGETLOCALE=: 'rbase'
+
+TARGETHEADER=: ''
+
+TARGETEXTRA=: ''
+
+BUILDOPTS=: 0 1 0 0 0 0 0
+
+PREBUILDFILE=: ''
+
+POSTBUILDFILE=: '~R/rbase/postbuild.ijs'
+
+TESTFILE=: '~R/rbase/test.ijs'
+
+NOTES=: ''
+
+VERSION=: ''
+
+WINDOWS=: ''
