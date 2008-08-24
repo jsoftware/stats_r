@@ -1,6 +1,10 @@
 stats/r - change history
 
-== 1.0.9 ==
+== 1.0.10 ==
+ * send of NULL supported
+ * rserve script loads rdsock and rbase
+
+== 1.0.9/10 ==
  * symbols replaced with ` prefixed names
  * reworked to simpler socket interface 
  * rdsock renamed to rserve
