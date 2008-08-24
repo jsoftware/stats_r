@@ -18,9 +18,11 @@ RELEASE=: 'j602'
 
 FILES=: 0 : 0
 history.txt
+readme.txt
+rbase.ijs
 rdcmd.ijs
 rdcom.ijs
-rbase.ijs
+rdsock.ijs
 rserve.ijs
 test_rdsock.ijs
 )
