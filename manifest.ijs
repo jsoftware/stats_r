@@ -24,6 +24,6 @@ rdcmd.ijs
 rdcom.ijs
 rdsock.ijs
 rserve.ijs
-test_rdsock.ijs
+test_rserve.ijs
 )
 
