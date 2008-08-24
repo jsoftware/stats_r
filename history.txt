@@ -1,9 +1,13 @@
 stats/r - change history
 
-== 1.0.8 ==
- * bugfix
- 
-== 1.0.6/7 ==
+== 1.0.9 ==
+ * symbols replaced with ` prefixed names
+ * reworked to simpler socket interface 
+ * rdsock renamed to rserve
+ * rbase added
+
+== 1.0.6/7/8 ==
+ * bugfixes
  * Rgettree returns tree format
 
 == 1.0.5 ==

@@ -12,7 +12,7 @@ For more information, see wiki page http://www.jsoftware.com/jwiki/Interfaces/R 
 
 LABCATEGORY=: 'Stats'
 
-VERSION=: '1.0.8'
+VERSION=: '1.0.9'
 
 RELEASE=: 'j602'
 
@@ -20,7 +20,8 @@ FILES=: 0 : 0
 history.txt
 rdcmd.ijs
 rdcom.ijs
-rdsock.ijs
+rbase.ijs
+rserve.ijs
 test_rdsock.ijs
 )
 
