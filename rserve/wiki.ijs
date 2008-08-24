@@ -3,7 +3,7 @@ NB.
 NB. Generates wiki examples
 NB.
 NB. Ensure that Rserve is already started and
-NB. rserve.ijs is loaded
+NB. stats/r/rserve is loaded
 
 cocurrent 'base'
 

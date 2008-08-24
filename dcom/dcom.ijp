@@ -1,12 +1,12 @@
-NB. project file: e:\deb\public\r\dcom\dcom
+NB. project file: /home/chris/deb/addons/stats/r/dcom/dcom
 
 coclass 'jproject'
 
 PRIMARYFILES=: 0 : 0
-~R\dcom\init
-~R\dcmd\util
-~R\dcom\cmd
-~R\dcom\zfns
+~R/dcom/init
+~R/dcmd/util
+~R/dcom/cmd
+~R/dcom/zfns
 )
 
 PRIMARYLIBS=: 'strings'
@@ -16,11 +16,11 @@ DEVFILES=: ''
 DEVLIBS=: ''
 
 OTHERFILES=: 0 : 0
-~R\dcom\test0.ijs
-~R\dcom\test1.ijs
+~R/dcom/test0.ijs
+~R/dcom/test1.ijs
 )
 
-TARGETFILE=: '~R\dcom\rdcom.ijs'
+TARGETFILE=: '~R/rdcom.ijs'
 
 TARGETLOCALE=: 'prdcom'
 
@@ -32,12 +32,12 @@ BUILDOPTS=: 0 1 0 0 0 0 0
 
 PREBUILDFILE=: ''
 
-POSTBUILDFILE=: '~R\dcom\save.ijs'
+POSTBUILDFILE=: '~R/dcom/save.ijs'
 
-TESTFILE=: '~R\dcom\test.ijs'
+TESTFILE=: '~R/dcom/test.ijs'
 
 NOTES=: ''
 
-WINDOWS=: ''
+VERSION=: ''
 
-WINDOWSTATE=: 0
+WINDOWS=: ''

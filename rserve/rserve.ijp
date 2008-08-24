@@ -1,4 +1,4 @@
-NB. project file: /home/chris/dev/apps/beta/source/r/rserve/rserve
+NB. project file: /home/chris/deb/addons/stats/r/rserve/rserve
 
 coclass 'jproject'
 
@@ -28,14 +28,13 @@ DEVLIBS=: ''
 OTHERFILES=: 0 : 0
 ~R/history.txt
 ~R/manifest.ijs
+~R/readme.txt
 ~R/rserve.ijs
+~R/test_rserve.ijs
 ~R/rserve/demo.ijs
-~R/rserve/readme.txt
-~R/rserve/save.ijs
 ~R/rserve/send.ijs
 ~R/rserve/splinedemo.ijs
 ~R/rserve/test0.ijs
-~R/rserve/test_rserve.ijs
 ~R/rserve/testjm.ijs
 ~R/rserve/testplot.ijs
 ~R/rserve/wiki.ijs
@@ -49,7 +48,7 @@ TARGETHEADER=: ''
 
 TARGETEXTRA=: ''
 
-BUILDOPTS=: 0 2 2 1 0 0 0
+BUILDOPTS=: 0 1 2 1 0 0 0
 
 PREBUILDFILE=: ''
 

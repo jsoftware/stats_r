@@ -16,6 +16,10 @@ boot_z_ 'system/main/sysenv.ijs'
 boot_z_ 'system/main/stdlib.ijs'
 boot_z_ 'system/main/colib.ijs'
 boot_z_ 'system/main/winlib.ijs'
+script_z_ '~system/main/dll.ijs'
+script_z_ '~system/main/libpath.ijs'
+script_z_ '~system/main/socket.ijs'
+
 coclass 'rserve'
 
 

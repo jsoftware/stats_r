@@ -1,4 +1,4 @@
-NB. project file: e:/deb/public/r/dcmd/dcmd
+NB. project file: /home/chris/deb/addons/stats/r/dcmd/dcmd
 
 coclass 'jproject'
 
@@ -21,7 +21,7 @@ DEVLIBS=: ''
 
 OTHERFILES=: '~R/dcmd/test0.ijs'
 
-TARGETFILE=: '~R/dcmd/rdcmd.ijs'
+TARGETFILE=: '~R/rdcmd.ijs'
 
 TARGETLOCALE=: 'prdcmd'
 
