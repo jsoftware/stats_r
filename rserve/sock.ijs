@@ -84,7 +84,7 @@ EMPTY
 NB. =========================================================
 connect=: 3 : 0
 if. RSK e. SOCKETS do. 1 return. end.
-RSK=: 0
+RSK_rserve_=: 0
 'host port'=. 2 {. boxopen y
 HOST=: host, (0=#host)#'localhost'
 PORT=: {. port,DEFPORT

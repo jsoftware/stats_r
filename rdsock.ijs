@@ -46,6 +46,9 @@ roundint=: <. @ +&0.5
 roundup=: [ * [: >. %~
 symsort=: ":@('`'~:{.) , ]
 toscalar=: {.^:((,1) -: $)
+debugq=: 13!:17
+debugss=: 13!:3
+debugstack=: 13!:13
 errormsg=: 3 : 0
 if. y e. ERRNUM do.
   'Error code: ',(":y),' ',(ERRNUM i. y) pick ERRMSG
@@ -175,7 +178,9 @@ XT_STR=: 3
 XT_LANG=: 4           
 XT_SYM=: 5            
 XT_BOOL=: 6           
+
 XT_S4=: 7             
+
 XT_VECTOR=: 16        
 XT_LIST=: 17          
 XT_CLOS=: 18          
@@ -186,13 +191,15 @@ XT_LANG_NOTAG=: 22
 XT_LANG_TAG=: 23      
 XT_VECTOR_EXP=: 26    
 XT_VECTOR_STR=: 27    
+
 XT_ARRAY_INT=: 32     
 XT_ARRAY_DOUBLE=: 33  
 XT_ARRAY_STR=: 34     
-XT_RAW=: 37           
-XT_ARRAY_CPLX=: 38    
 XT_ARRAY_BOOL_UA=: 35 
 XT_ARRAY_BOOL=: 36    
+XT_RAW=: 37           
+XT_ARRAY_CPLX=: 38    
+
 XT_UNKNOWN=: 48       
 XT_LARGE=: 64         
 XT_HAS_ATTR=: 128     
@@ -210,6 +217,8 @@ j=. <;._2 (0 : 0)
 75 incoming packet is too big.
 76 the requested object is too big
 77 out of memory. the connection is usually closed after this
+80 session is still busy
+81 unable to detach session
 )
 
 ERRMSG=: 3 }. each j
@@ -219,8 +228,8 @@ FORCETHROW=: 0
 throwtext=: ''
 throw=: 3 : 0
 throwtext_rserve_=: y
-if. FORCETHROW < dbq'' do.
-  dbss ; (}. {."1 (13!:13)'') ,each <' *:*,'
+if. FORCETHROW < debugq'' do.
+  debugss ; (2 }. {."1 debugstack'') ,each <' *:*,'
   info y
 else.
   smoutput y
@@ -455,7 +464,7 @@ EMPTY
 )
 connect=: 3 : 0
 if. RSK e. SOCKETS do. 1 return. end.
-RSK=: 0
+RSK_rserve_=: 0
 'host port'=. 2 {. boxopen y
 HOST=: host, (0=#host)#'localhost'
 PORT=: {. port,DEFPORT
@@ -498,7 +507,7 @@ if. 1 ~: ax 2 { res do.
   throw 'invalid response flag'
 end.
 rc=. _1 ic 2 {. res
-if. rc = 1 do.
+if. rc = 1 do. 
   if. y=0 do. EMPTY return. end.
   res=. 16 }. res
   if. 0 = #res do.

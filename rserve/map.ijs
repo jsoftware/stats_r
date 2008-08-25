@@ -94,7 +94,6 @@ else.
       dat=. <"_1 dat
     end.
   end.
-NB.   nms=. nms -.each '.'
   res=. i.0 2
   if. IfTree do.
     res=. res,nms,.dat

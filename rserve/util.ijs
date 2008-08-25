@@ -27,6 +27,12 @@ symsort=: ":@('`'~:{.) , ]
 toscalar=: {.^:((,1) -: $)
 
 NB. =========================================================
+NB. required debug verbs
+debugq=: 13!:17
+debugss=: 13!:3
+debugstack=: 13!:13
+
+NB. =========================================================
 errormsg=: 3 : 0
 if. y e. ERRNUM do.
   'Error code: ',(":y),' ',(ERRNUM i. y) pick ERRMSG

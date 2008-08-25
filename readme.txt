@@ -1,6 +1,6 @@
 stats/r addon
 
-The stats/r addon has core utilities for interfacing with R. 
+The stats/r addon has core utilities for interfacing with R.
 
 There are three such interfaces:
 
@@ -12,7 +12,7 @@ The distributed scripts are:
 
   rserve.ijs   - load the rserve utilities
   rdsock.ijs   - rserve socket handling
-  rbase.ijs    - rserve base utilities 
+  rbase.ijs    - rserve base utilities
 
   rdcmd.ijs    - batch script
   rdcom.ijs    - com script

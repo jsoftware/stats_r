@@ -16,7 +16,8 @@ if. 1 ~: ax 2 { res do.
   throw 'invalid response flag'
 end.
 rc=. _1 ic 2 {. res
-if. rc = 1 do.
+NB. success response
+if. rc = 1 do. 
   if. y=0 do. EMPTY return. end.
   res=. 16 }. res
   if. 0 = #res do.
@@ -35,6 +36,7 @@ if. rc = 1 do.
     att2tree res
   end.
 else.
+NB. fail response
   throw errormsg ax 3 { res
 end.
 )

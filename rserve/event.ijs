@@ -13,8 +13,8 @@ NB. an info box, and stop all verbs on stack,
 NB. otherwise write text to the session and throw.
 throw=: 3 : 0
 throwtext_rserve_=: y
-if. FORCETHROW < dbq'' do.
-  dbss ; (}. {."1 (13!:13)'') ,each <' *:*,'
+if. FORCETHROW < debugq'' do.
+  debugss ; (2 }. {."1 debugstack'') ,each <' *:*,'
   info y
 else.
   smoutput y
