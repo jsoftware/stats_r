@@ -25,16 +25,16 @@ NB. utilities for working with R structures
 
 DELIM=: '$'
 
-STRTYP=. 2 65536 131072
-istble=. ((2: = {:) *. 2: = #)@$
-isstr=. ([: *./ STRTYP e.~ [: 3!:0@> ])
-iskeys=. (isstr *. 1: = L.)@:({."1)
-
-NB. ismap v Is a noun a valid map?
-ismap=: (iskeys *. istble) f.
+NB. STRTYP=. 2 65536 131072
+NB. istble=. ((2 = {:) *. 2 = #)@$
+NB. isstr=. (STRTYP e.~ 3!:0&>) *./@, 2 > #@$&>
+NB. iskeys=. (isstr *. 1 = L.)@:({."1)
+NB.
+NB. NB. ismap v Is a noun a valid map?
+NB. ismap=: (iskeys *. istble) f.
 
 NB. isattr v Is a key an attribute?
-isattr=: '`' = [: {. &> {."1^:ismap
+isattr=: '`' = [: {. &> {."1^:ismap_jmap_
 
 NB.*rgetmap v [monad] Returns keys for R tree structure
 NB. eg: KEYS=: rgetmap MAPRTREE
@@ -48,10 +48,10 @@ NB.         Attribute names are signified by a
 NB.        leading backtick (`)
 NB. eg: VALUE=: 'qr$qr$`dimnames' getmapr MAPRTREE
 rgetmap=: 3 : 0
-  getmap y
+  getmap_jmap_ y
   :
   for_i. parsekey boxopen x do.
-    y=. i getmap y
+    y=. i getmap_jmap_ y
   end.
 )
 
@@ -82,7 +82,7 @@ NB.*rgetmapx v Keys of all leaves in R tree structure
 NB. KEYS=: rgetmapx MAP
 rgetmapx=: 3 : 0
   r=. ''
-  if. ismap y do.
+  if. ismap_jmap_ y do.
     for_i. rgetmap y do.
       r=. r, i [`( (, DELIM&,)&.> )@.(*@#@]) rgetmapx i rgetmap y
     end. end.
@@ -91,10 +91,10 @@ rgetmapx=: 3 : 0
 NB.*rmap v Converts R tree format to map format.
 NB. rmap=: ([ ,. (rgetmap&.> <))~ rgetmapx
 NB.! removes '`'s that are part of a name
-rmap=: (([: -.&'`'&.> [) ,. (rgetmap&.> <))~ rgetmapx
+rtomap=: (([: -.&'`'&.> [) ,. (rgetmap&.> <))~ rgetmapx
 
-Rgetmap_z_=: rgetmap_rbase_
-Rgetattr_z_=: getAttr_rbase_
-Rgetvars_z_=: getVars_rbase_
-Rmap_z_=: rmap_rbase_
+Rmap_z_=: rgetmap_rbase_
+Rattr_z_=: getAttr_rbase_
+Rvars_z_=: getVars_rbase_
+Rtomap_z_=: rtomap_rbase_
 

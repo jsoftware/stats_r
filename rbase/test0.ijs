@@ -17,36 +17,30 @@ VKEYS=: p, 'model';'qr';'rank';'residuals';'terms';'xlevels'
 VARNM=:'Infant.Mortality';'Catholic'
 test=: 3 : 0
   assert. (AKEYS,VKEYS)-: rgetmap_rbase_ MAPRTREE
-  assert. AKEYS -: Rgetmap attr_rbase_ MAPRTREE
-  assert. VKEYS -: Rgetmap vars_rbase_ MAPRTREE
-  assert. 2 2 = $'coefficients' Rgetmap MAPRTREE
-  assert. 0.00001>0.01225676 - 'coefficients$Catholic' Rgetmap MAPRTREE
-  assert. 47 2 = $'residuals' Rgetmap MAPRTREE
-  assert. 8=3!:0 >{:"1 'residuals' Rgetmap MAPRTREE
-  assert. 0.00001>_1.957214 - 'residuals$V. De Geneve' Rgetmap MAPRTREE
+  assert. AKEYS -: Rmap attr_rbase_ MAPRTREE
+  assert. AKEYS -: Rattr MAPRTREE
+  assert. VKEYS -: Rmap vars_rbase_ MAPRTREE
+  assert. VKEYS -: Rvars MAPRTREE
+  assert. 2 2 = $'coefficients' Rmap MAPRTREE
+  assert. 0.00001>0.01225676 - 'coefficients$Catholic' Rmap MAPRTREE
+  assert. 47 2 = $'residuals' Rmap MAPRTREE
+  assert. 8=3!:0 >{:"1 'residuals' Rmap MAPRTREE
+  assert. 0.00001>_1.957214 - 'residuals$V. De Geneve' Rmap MAPRTREE
   assert. 47 2 = $'fitted.values' rgetmap_rbase_ MAPRTREE
-  assert. VARNM -: Rgetmap vars_rbase_ 'model' Rgetmap MAPRTREE
-  assert. 11 = #Rgetmap attr_rbase_ 'model$`terms' Rgetmap MAPRTREE
-  assert. 'Catholic'-:'terms$`term.labels' Rgetmap MAPRTREE
-  assert. VARNM -: }.'model$`terms$`variables' Rgetmap MAPRTREE
-  assert. 'numeric' -: 'model$`terms$`dataClasses$Catholic' Rgetmap MAPRTREE
-  assert. 47 2 -: #&> 'qr$qr$`dimnames' Rgetmap MAPRTREE
+  assert. VARNM -: Rmap vars_rbase_ 'model' Rmap MAPRTREE
+  assert. 11 = #Rmap attr_rbase_ 'model$`terms' Rmap MAPRTREE
+  assert. 'Catholic'-:'terms$`term.labels' Rmap MAPRTREE
+  assert. VARNM -: }. res=.'model$`terms$`variables' Rmap MAPRTREE
+  assert. res -: 'model$terms$variables' getmap MAPR
+  assert. 'numeric' -: 'model$`terms$`dataClasses$Catholic' Rmap MAPRTREE
+  assert. 47 2 -: #&> 'qr$qr$`dimnames' Rmap MAPRTREE
   NB. Get more than one key
-  datkeys=. 'model$'&,&.> Rgetmap vars_rbase_ 'model' Rgetmap MAPRTREE
-  data=. datkeys Rgetmap"0 _ MAPRTREE
+  datkeys=. 'model$'&,&.> Rvars 'model' Rmap MAPRTREE
+  data=. datkeys Rmap"0 _ MAPRTREE
   assert. 2 47 -: $data
   assert. 8 = 3!:0 data
-
-  'test0.ijs for mapr passed'
-)
-
-Note ''
-Instead of adverbs could use verbs:
-[name] getAttr STRUCT
-[name] getVars STRUCT
-
-[data] [name] setAttrs STRUCT
-[data] [name] setVars STRUCT
+  assert. 187 2 = $Rtomap MAPRTREE
+  'test0.ijs for rmap passed'
 )
 
 smoutput test''
