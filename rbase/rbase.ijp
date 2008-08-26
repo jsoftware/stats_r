@@ -1,10 +1,11 @@
-NB. project file: /home/chris/dev/apps/beta/source/r/rbase/rbase
+NB. project file: c:/users/rsherloc/documents/j602-user/jsrc/addons/stats/r/rbase/rbase
 
 coclass 'jproject'
 
 PRIMARYFILES=: 0 : 0
 ~R/rbase/init
 ~R/rbase/util
+~R/rbase/mapr
 )
 
 PRIMARYLIBS=: 0 : 0
