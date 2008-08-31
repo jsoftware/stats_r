@@ -5,7 +5,9 @@ coclass 'jproject'
 PRIMARYFILES=: 0 : 0
 ~R/rbase/init
 ~R/rbase/util
+~R/rbase/rtree
 ~R/rbase/rmap
+~R/rbase/zfns
 )
 
 PRIMARYLIBS=: 0 : 0

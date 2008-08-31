@@ -40,7 +40,7 @@ test=: 3 : 0
   assert. 2 47 -: $data
   assert. 8 = 3!:0 data
   assert. 187 2 = $Rtomap MAPRTREE
-  'test0.ijs for rmap passed'
+  'test0.ijs for rtree passed'
 )
 
 smoutput test''
