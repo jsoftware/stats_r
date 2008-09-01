@@ -39,12 +39,11 @@ ismatrix=: 2 = #@$
 isopen=: 0 = L.
 isnan=: 128!:5
 isscalar=: 0 = #@$
-issymbol=: 65536 = 3!:0
 rflip=: _2 |: |.@$ $ ,
 round=: [ * [: <. 0.5 + %~
 roundint=: <. @ +&0.5
 roundup=: [ * [: >. %~
-symsort=: ":@('`'~:{.) , ]
+symsort=: ,~ '10' {~ '`'={.
 toscalar=: {.^:((,1) -: $)
 debugq=: 13!:17
 debugss=: 13!:3
@@ -79,8 +78,7 @@ nms=. {."1 y
 if. 0 e. ischar &> nms do.
   ,:x;<y return.
 end.
-msk=. 0 < #&> nms
-nms=. (<x) ,each (msk{'';DELIM) ,each nms
+nms=. (<x) ,each DELIM ,each nms
 nms,.{:"1 y
 )
 rhdrlen=: 3 : 0
@@ -120,19 +118,19 @@ wraplen=: 4 : '(x rtyplen #y),y'
 
 NAR=: 162 7 0 0 0 0 248 127 { a.
 NAJ=: 2 fc __
-CMD_login=: 1
-CMD_voidEval=: 2
-CMD_eval=: 3
-CMD_shutdown=: 4
-CMD_openFile=: 16
-CMD_createFile=: 17
-CMD_closeFile=: 18
-CMD_readFile=: 19
-CMD_writeFile=: 20
-CMD_removeFile=: 21
-CMD_setSEXP=: 32
-CMD_assignSEXP=: 33
-CMD_setBufferSize=: 129
+CMD_login=: 1           
+CMD_voidEval=: 2        
+CMD_eval=: 3            
+CMD_shutdown=: 4        
+CMD_openFile=: 16       
+CMD_createFile=: 17     
+CMD_closeFile=: 18      
+CMD_readFile=: 19       
+CMD_writeFile=: 20      
+CMD_removeFile=: 21     
+CMD_setSEXP=: 32        
+CMD_assignSEXP=: 33     
+CMD_setBufferSize=: 129 
 DT_INT=: 1
 DT_CHAR=: 2
 DT_DOUBLE=: 3
@@ -170,39 +168,39 @@ j=. <;._2 (0 : 0)
 
 INTNAM=: 3 }. each j
 INTNUM=: 0 ". &> 2 {. each j
-XP_VEC=: _2147483648
-XT_NULL=: 0
-XT_INT=: 1
-XT_DOUBLE=: 2
-XT_STR=: 3
-XT_LANG=: 4
-XT_SYM=: 5
-XT_BOOL=: 6
+XP_VEC=: _2147483648  
+XT_NULL=: 0           
+XT_INT=: 1            
+XT_DOUBLE=: 2         
+XT_STR=: 3            
+XT_LANG=: 4           
+XT_SYM=: 5            
+XT_BOOL=: 6           
 
-XT_S4=: 7
+XT_S4=: 7             
 
-XT_VECTOR=: 16
-XT_LIST=: 17
-XT_CLOS=: 18
-XT_SYMNAME=: 19
-XT_LIST_NOTAG=: 20
-XT_LIST_TAG=: 21
-XT_LANG_NOTAG=: 22
-XT_LANG_TAG=: 23
-XT_VECTOR_EXP=: 26
-XT_VECTOR_STR=: 27
+XT_VECTOR=: 16        
+XT_LIST=: 17          
+XT_CLOS=: 18          
+XT_SYMNAME=: 19       
+XT_LIST_NOTAG=: 20    
+XT_LIST_TAG=: 21      
+XT_LANG_NOTAG=: 22    
+XT_LANG_TAG=: 23      
+XT_VECTOR_EXP=: 26    
+XT_VECTOR_STR=: 27    
 
-XT_ARRAY_INT=: 32
-XT_ARRAY_DOUBLE=: 33
-XT_ARRAY_STR=: 34
-XT_ARRAY_BOOL_UA=: 35
-XT_ARRAY_BOOL=: 36
-XT_RAW=: 37
-XT_ARRAY_CPLX=: 38
+XT_ARRAY_INT=: 32     
+XT_ARRAY_DOUBLE=: 33  
+XT_ARRAY_STR=: 34     
+XT_ARRAY_BOOL_UA=: 35 
+XT_ARRAY_BOOL=: 36    
+XT_RAW=: 37           
+XT_ARRAY_CPLX=: 38    
 
-XT_UNKNOWN=: 48
-XT_LARGE=: 64
-XT_HAS_ATTR=: 128
+XT_UNKNOWN=: 48       
+XT_LARGE=: 64         
+XT_HAS_ATTR=: 128     
 j=. <;._2 (0 : 0)
 65 auth. failed or auth. requested but no login came.
 66 connection closed or broken packet killed it
@@ -242,40 +240,24 @@ sData=: <'`data'
 sDim=: <'`dim'
 sNames=: <'`names'
 sRownames=: <'`row.names'
-att2map=: 3 : 0
+sexp2map=: 3 : 0
 IfAtt=: 0
-IfTree=: 0
-att2rep y
-)
-att2tree=: 3 : 0
-IfAtt=: 0
-IfTree=: 1
-att2rep y
-)
-att2rep=: 3 : 0
-dat=. att2rep1 y
+dat=. att2map y
 if. -.IfAtt do. return. end.
-if. IfTree do.
-  dat /: symsort each {."1 dat
-else.
-  ndx=. 1 i.~ 0 = # &> {."1 dat
-  if. ndx < #y do.
-    dat=. (<'data') (<ndx;0)} dat
-  end.
-  dat /: {."1 dat
-end.
+ndx=. 1 i.~ 0 = # &> {."1 dat
+dat /: symsort each {."1 dat
 )
-att2rep1=: 3 : 0
+att2map=: 3 : 0
 if. -. ismatrix y do.
   if. isopen y do.
     y
   else.
-    att2rep1 each y
+    att2map each y
   end.
   return.
 end.
 
-'att dat'=. att2rep1 each ,y
+'att dat'=. att2map each ,y
 
 if. -. ismatrix att do.
   if. 2 | #att do.
@@ -293,11 +275,7 @@ end.
 IfAtt=: 1
 ndx=. ({."1 att) i. sNames
 if. ndx = #att do.
-  if. IfTree do.
-    res=. ,:sData,<dat
-  else.
-    res=. ,:'';<dat
-  end.
+  res=. ,:'`data';<dat
 else.
   nms=. boxxopen 1 pick ndx { att
   att=. (<<<ndx) { att
@@ -312,21 +290,14 @@ else.
     end.
   end.
   res=. i.0 2
-  if. IfTree do.
-    res=. res,nms,.dat
-  else.
-    res=. res,;nms prefixnames each dat
-  end.
+  res=. res,;nms prefixnames each dat
 end.
 ndx=. ({."1 att) i. sRownames
 if. ndx < #att do.
   ind=. <ndx;1
   att=. (<fixxp >ind{att) ind}att
 end.
-if. -. IfTree do.
-  nms=. '`' -.~ each {."1 att
-  att=. flatt nms,.{:"1 att
-end.
+att=. flatt att
 res,att
 )
 flatt=: 3 : 0
@@ -354,10 +325,6 @@ rread 2
 rdgetexp=: 3 : 0
 send CMD_eval wrapcmd toRs ,y
 rread 1
-)
-rdgettree=: 3 : 0
-send CMD_eval wrapcmd toRs ,y
-rread 3
 )
 rdgetraw=: 3 : 0
 send CMD_eval wrapcmd toRs ,y
@@ -403,7 +370,7 @@ DEFPORT=: 6311
 RSK=: 0
 MAX=: 50000
 WAIT=: 20000
-SKACCEPT=: SKLISTEN=: ''
+SKACCEPT=: SKLISTEN=: '' 
 sd_accept=: 3 : '0 pick sd_check sdaccept y'
 sd_bind=: 3 : 'sd_check sdbind y'
 sd_reset=: 3 : 'sdcleanup $0'
@@ -515,15 +482,8 @@ if. rc = 1 do.
   end.
   typ=. ax {. res
   res=. toJ res
-  select. y
-  case. 1 do.
-    if. typ >: 128 do.
-      ,res
-    end.
-  case. 2 do.
-    att2map res
-  case. 3 do.
-    att2tree res
+  if. y=2 do.
+    sexp2map res
   end.
 else.
   throw errormsg ax 3 { res
@@ -562,7 +522,6 @@ dat=. len }. y
 dat=. (typ,3 {.2 ic #dat),dat
 ,:toJX each att;dat
 )
-
 toJXlist=: 3 : 0
 r=. ''
 dat=. y
@@ -685,7 +644,6 @@ Ropen=: rdopen_rserve_
 Rcmd=: rdcmd_rserve_
 Rget=: rdget_rserve_
 Rgetexp=: rdgetexp_rserve_
-Rgettree=: rdgettree_rserve_
 Rset=: rdset_rserve_
 Rreset=: Ropen@Rclose
 

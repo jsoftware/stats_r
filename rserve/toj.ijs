@@ -9,7 +9,6 @@ NB. rread - read response from R
 NB.  y=0  only check response
 NB.    1  read SEXP format
 NB.    2  read map format
-NB.    3  read tree format
 rread=: 3 : 0
 res=. read''
 if. 1 ~: ax 2 { res do.
@@ -25,15 +24,8 @@ if. rc = 1 do.
   end.
   typ=. ax {. res
   res=. toJ res
-  select. y
-  case. 1 do.
-    if. typ >: 128 do.
-      ,res
-    end.
-  case. 2 do.
-    att2map res
-  case. 3 do.
-    att2tree res
+  if. y=2 do.
+    sexp2map res
   end.
 else.
 NB. fail response
@@ -83,7 +75,6 @@ dat=. len }. y
 dat=. (typ,3 {.2 ic #dat),dat
 ,:toJX each att;dat
 )
-
 
 NB. =========================================================
 toJXlist=: 3 : 0

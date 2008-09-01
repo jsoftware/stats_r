@@ -17,13 +17,11 @@ ismatrix=: 2 = #@$
 isopen=: 0 = L.
 isnan=: 128!:5
 isscalar=: 0 = #@$
-issymbol=: 65536 = 3!:0
 rflip=: _2 |: |.@$ $ ,
 round=: [ * [: <. 0.5 + %~
 roundint=: <. @ +&0.5
 roundup=: [ * [: >. %~
-NB. sym2str=: >@(5&s:) :: ]
-symsort=: ":@('`'~:{.) , ]
+symsort=: ,~ '10' {~ '`'={.
 toscalar=: {.^:((,1) -: $)
 
 NB. =========================================================
@@ -73,8 +71,7 @@ nms=. {."1 y
 if. 0 e. ischar &> nms do.
   ,:x;<y return.
 end.
-msk=. 0 < #&> nms
-nms=. (<x) ,each (msk{'';DELIM) ,each nms
+nms=. (<x) ,each DELIM ,each nms
 nms,.{:"1 y
 )
 

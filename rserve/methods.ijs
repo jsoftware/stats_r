@@ -3,7 +3,7 @@ NB.
 NB. all prefixed with 'rd'
 NB. close|open
 NB. cmd
-NB. get|getexp|getraw|gettree
+NB. get|getexp|getraw
 NB. set
 
 NB. =========================================================
@@ -29,13 +29,6 @@ NB. getexp: with REXP response
 rdgetexp=: 3 : 0
 send CMD_eval wrapcmd toRs ,y
 rread 1
-)
-
-NB. =========================================================
-NB. gettree: with tree response
-rdgettree=: 3 : 0
-send CMD_eval wrapcmd toRs ,y
-rread 3
 )
 
 NB. =========================================================

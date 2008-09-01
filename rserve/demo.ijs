@@ -47,13 +47,9 @@ Rcmd 'lxy=lsfit(x,y)'
 Rget 'lxy$coefficients'
 Rget 'lxy$residuals'
 Rget 'lxy'
-Rgettree 'lxy$coefficients'
-Rgettree 'lxy$residuals'
-Rgettree 'lxy'
 
 Rcmd 'data(OrchardSprays)'
 Rgetexp 'OrchardSprays'
 Rget 'OrchardSprays'
-Rgettree 'OrchardSprays'
 
 Rclose''

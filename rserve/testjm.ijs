@@ -8,8 +8,6 @@ smoutput '   ', y
 smoutput A=: Rgetexp y
 smoutput ''
 smoutput B=: Rget y
-smoutput ''
-smoutput C=: Rgettree y
 )
 
 Rcmd 'x <- seq(1,20,0.5)'

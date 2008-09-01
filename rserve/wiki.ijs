@@ -8,10 +8,6 @@ NB. stats/r/rserve is loaded
 cocurrent 'base'
 
 NB. =========================================================
-NB. connecting
-
-'' conew 'rserve'
-
 Rget 'pi'
 Rget '1:4'
 
