@@ -1,47 +1,62 @@
-NB. Utilities for converting to/from map & str formats 
+NB. Utilities for converting to/from map & str formats
 NB. from/to R tree structure
 
-NB. smplnames v removes leading attribute designator from attribute names
-NB.! will also remove '`'s that are part of a name!
-smplnames=: ([: -.&ATTRIB&.> {."1) ,. {:"1  
+DELIM=: '$'
+ATTRIB=: '`'
 
-NB.*rtomap0 v Converts R tree format to map format
-NB. retains attribute designator
-rtomap0=: ([ ,. (rgetmap&.> <))~ rgetmapx  NB.
+NB.delimit v Delimits list of boxed strings y with x
+delimit=: ' '&$: : (4 : '(;@(#^:_1!.(<x))~  1 0$~0 >. _1 2 p.#) y')
 
-NB.*rtomap v Converts R tree format to map format
-NB. rtomap=: ([ ,. (rgetmap&.> <))~ rgetmapx
-NB.! removes '`'s that are part of a name too!
-rtomap=: smplnames @: rtomap0
+NB.parsekey v Parses string of key name for getmapr
+NB. returns list of boxed literals describing key
+NB.  eg:  parsekey 'terms$`terms.labels'
+parsekey=: [: <;._1 DELIM&,@:>
 
-NB.*rtotree v convert flat map to nested tree
-NB. MAPX=: rtotree MAP
-NB. calls flatmapx_jmap_ with rbase defn for DELIM
-rtotree=: 3 : 0
-  archive=. DELIM_jmap_
-  DELIM_jmap_=: DELIM_rbase_
-  r=. flatmapx_jmap_ y
-  DELIM_jmap_=: archive
-  r
+NB.*ndxmap v Indices in MAP of all keys with leading keys matching x
+NB. eg: 'key' rndxmap MAP
+ndxmap=: 4 : 0
+  lookup=. parsekey x
+  NB. keys=. ((#lookup) {. parsekey@])&.> getmap y
+  keys=. lookup&((#@[ <. #@]) {. parsekey@])&.> rgetmap y
+  I. keys e.&> <,:lookup
 )
 
-linear=: 3 : 0
-  if. (# *. L.) y do. y=.<y end.
-  5!:5<'y'
+NB.*rgetmap v [monad] Returns keys for R map structure
+NB. eg: KEYS=: rgetmap MAPR
+
+NB.*rgetmap v [dyad] Returns value(s) from R map structure
+NB. result: value(s) of key(s) matching x if exact match
+NB.       map of trailing keys and values if x matches leading keys
+NB. form: key rgetmap mapstruct
+NB. key is: string of key names delimited by DELIM.
+NB.       attribute names are designated by leading ATTRIB
+NB. eg: VALUE=: 'qr$qr$`dimnames' rgetmap MAPR
+rgetmap=: 3 : 0
+  {."1 y
+  :
+  NB. vals=. x (([: < ;&1@ndxmap) { ]) y
+  tmp=. x (ndxmap { ]) y
+  if. *./ x&(>@[ =&# ]) &> {."1 tmp do.
+    >,/{:"1 tmp
+  else.
+    keys=. DELIM&delimit@((#parsekey x) }. parsekey@])&.> rgetmap tmp
+    keys,.{:"1 tmp
+  end.
 )
 
-NB. calls box2str_jmap_ with rbase defn for linear
-box2str=: 3 : 0
-  archive=. linear_jmap_ f.
-  linear_jmap_=: linear_rbase_ f.
-  r=. box2str_jmap_ y
-  linear_jmap_=: archive f.
-  r
-)
+NB. isattr v Is a key an attribute?
+isattr=: ATTRIB = [: {. &> rgetmap^:ismap_jmap_
 
-NB.*rtree2str v convert tree to multiline string
-NB. STR=: rtree2str MAPX
-rtree2str=: box2str @: rtomap0
+NB. for use with adverbs attr & vars
+getattr=: I.@:isattr { ]
+getvars=: I.@:-.@:isattr { ]
 
-NB.*rstr2tree v convert multiline string to tree
-rstr2tree=: rtotree @: str2box_jmap_
+NB.*attr a Filters results of getmapr to only attributes
+NB. eg: KEYS=: getmapr attr MAPRTREE
+NB. eg: VALUE=: 'model' getmapr attr MAPRTREE
+attr=: 1 : 'getattr_rbase_@:u'
+
+NB.*vars a Filters results of getmapr to non-attributes
+NB. eg: KEYS=: getmapr vars MAPRTREE
+NB. eg: VALUE=: 'model' getmapr vars MAPRTREE
+vars=: 1 : 'getvars_rbase_@:u'
