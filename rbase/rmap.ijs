@@ -34,14 +34,15 @@ NB. eg: VALUE=: 'qr$qr$`dimnames' rgetmap MAPR
 rgetmap=: 3 : 0
   {."1 y
   :
-  NB. vals=. x (([: < ;&1@ndxmap) { ]) y
-  tmp=. x (ndxmap { ]) y
-  if. *./ x&(>@[ =&# ]) &> {."1 tmp do.
-    >,/{:"1 tmp
-  else.
-    keys=. DELIM&delimit@((#parsekey x) }. parsekey@])&.> rgetmap tmp
-    keys,.{:"1 tmp
-  end.
+  try.
+    tmp=. x (ndxmap { ]) y
+    if. *./ x&(>@[ =&# ]) &> {."1 tmp do.
+      >,/{:"1 tmp
+    else.
+      keys=. DELIM&delimit@((#parsekey x) }. parsekey@])&.> rgetmap tmp
+      keys,.{:"1 tmp
+    end.
+  catch. empty'' end.
 )
 
 NB. isattr v Is a key an attribute?

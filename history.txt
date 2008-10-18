@@ -1,5 +1,9 @@
 stats/r - change history
 
+== 1.0.14 ==
+ * rgetmap returns empty if key not present in R map format structure
+ * add optional left argument for Rget that specifies portion of result to return 
+
 == 1.0.13 ==
  * rbase utils for getting keys from R map format structures
 

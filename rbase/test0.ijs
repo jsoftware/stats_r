@@ -7,6 +7,8 @@ NB. Ensure Rserve sockets server is started
 )
 
 NB. Test data
+erase 'MAPR AKEYS VKEYS VARNM'
+Rreset''
 Rcmd 'data(swiss)'
 MAPR=: Rget 'lm(Infant.Mortality ~ Catholic, data=swiss)'
 
@@ -37,6 +39,9 @@ test=: 3 : 0
   data=. datkeys Rmap"0 _ MAPR
   assert. 2 47 -: $data
   assert. 8 = 3!:0 data
+  data=. (;:'assign BADNAME rank xlevels') <@Rmap"0 _ MAPR
+  assert. 2 0 1 1 -: #&> data
+  assert. 1 1 0 2 -: #@$&> data
   'test0.ijs for rmap passed'
 )
 
