@@ -56,9 +56,9 @@ NB. assert. 'function(x,y) {x + 2 * y}' -: 1 1 {:: Rget'foo'
 
 NB. ---------------------------------------------------------
 Rcmd 'x=factor(c("one","two","three","four"))'
-d=. ;: 'class factor'
-d=. d,:'data';2 4 3 1
-d=. d,'levels';<;:' four one three two'
+d=. '`class';'factor'
+d=. d,:'`data';2 4 3 1
+d=. d,'`levels';<;:' four one three two'
 assert. d -: Rget 'x'
 
 NB. ---------------------------------------------------------
