@@ -1,21 +1,6 @@
 NB. built from project: ~R/rserve/rserve
 NB. init
 
-3 : 0 ''
-if. 0 = 4!:0 <'PATHSEP_j_' do. return. end.
-PATHSEP_j_=: ((9!:12'') e. 6 7) { '/\'
-jhostpath_z_=: PATHSEP_j_ & (I. @ (e.&'/\')@] })
-jpath_z_=: jhostpath
-load_z_=: require_z_=: ]
-0
-)
-
-
-boot_z_=: 3 : '0!:0 <jhostpath y'
-boot_z_ 'system/main/sysenv.ijs'
-boot_z_ 'system/main/stdlib.ijs'
-boot_z_ 'system/main/colib.ijs'
-boot_z_ 'system/main/winlib.ijs'
 script_z_ '~system/main/dll.ijs'
 script_z_ '~system/main/libpath.ijs'
 script_z_ '~system/main/socket.ijs'
@@ -118,19 +103,19 @@ wraplen=: 4 : '(x rtyplen #y),y'
 
 NAR=: 162 7 0 0 0 0 248 127 { a.
 NAJ=: 2 fc __
-CMD_login=: 1           
-CMD_voidEval=: 2        
-CMD_eval=: 3            
-CMD_shutdown=: 4        
-CMD_openFile=: 16       
-CMD_createFile=: 17     
-CMD_closeFile=: 18      
-CMD_readFile=: 19       
-CMD_writeFile=: 20      
-CMD_removeFile=: 21     
-CMD_setSEXP=: 32        
-CMD_assignSEXP=: 33     
-CMD_setBufferSize=: 129 
+CMD_login=: 1
+CMD_voidEval=: 2
+CMD_eval=: 3
+CMD_shutdown=: 4
+CMD_openFile=: 16
+CMD_createFile=: 17
+CMD_closeFile=: 18
+CMD_readFile=: 19
+CMD_writeFile=: 20
+CMD_removeFile=: 21
+CMD_setSEXP=: 32
+CMD_assignSEXP=: 33
+CMD_setBufferSize=: 129
 DT_INT=: 1
 DT_CHAR=: 2
 DT_DOUBLE=: 3
@@ -168,39 +153,39 @@ j=. <;._2 (0 : 0)
 
 INTNAM=: 3 }. each j
 INTNUM=: 0 ". &> 2 {. each j
-XP_VEC=: _2147483648  
-XT_NULL=: 0           
-XT_INT=: 1            
-XT_DOUBLE=: 2         
-XT_STR=: 3            
-XT_LANG=: 4           
-XT_SYM=: 5            
-XT_BOOL=: 6           
+XP_VEC=: _2147483648
+XT_NULL=: 0
+XT_INT=: 1
+XT_DOUBLE=: 2
+XT_STR=: 3
+XT_LANG=: 4
+XT_SYM=: 5
+XT_BOOL=: 6
 
-XT_S4=: 7             
+XT_S4=: 7
 
-XT_VECTOR=: 16        
-XT_LIST=: 17          
-XT_CLOS=: 18          
-XT_SYMNAME=: 19       
-XT_LIST_NOTAG=: 20    
-XT_LIST_TAG=: 21      
-XT_LANG_NOTAG=: 22    
-XT_LANG_TAG=: 23      
-XT_VECTOR_EXP=: 26    
-XT_VECTOR_STR=: 27    
+XT_VECTOR=: 16
+XT_LIST=: 17
+XT_CLOS=: 18
+XT_SYMNAME=: 19
+XT_LIST_NOTAG=: 20
+XT_LIST_TAG=: 21
+XT_LANG_NOTAG=: 22
+XT_LANG_TAG=: 23
+XT_VECTOR_EXP=: 26
+XT_VECTOR_STR=: 27
 
-XT_ARRAY_INT=: 32     
-XT_ARRAY_DOUBLE=: 33  
-XT_ARRAY_STR=: 34     
-XT_ARRAY_BOOL_UA=: 35 
-XT_ARRAY_BOOL=: 36    
-XT_RAW=: 37           
-XT_ARRAY_CPLX=: 38    
+XT_ARRAY_INT=: 32
+XT_ARRAY_DOUBLE=: 33
+XT_ARRAY_STR=: 34
+XT_ARRAY_BOOL_UA=: 35
+XT_ARRAY_BOOL=: 36
+XT_RAW=: 37
+XT_ARRAY_CPLX=: 38
 
-XT_UNKNOWN=: 48       
-XT_LARGE=: 64         
-XT_HAS_ATTR=: 128     
+XT_UNKNOWN=: 48
+XT_LARGE=: 64
+XT_HAS_ATTR=: 128
 j=. <;._2 (0 : 0)
 65 auth. failed or auth. requested but no login came.
 66 connection closed or broken packet killed it
@@ -370,7 +355,7 @@ DEFPORT=: 6311
 RSK=: 0
 MAX=: 50000
 WAIT=: 20000
-SKACCEPT=: SKLISTEN=: '' 
+SKACCEPT=: SKLISTEN=: ''
 sd_accept=: 3 : '0 pick sd_check sdaccept y'
 sd_bind=: 3 : 'sd_check sdbind y'
 sd_reset=: 3 : 'sdcleanup $0'
