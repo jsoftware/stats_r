@@ -22,7 +22,7 @@ RIN fwrite~ (addLF RHDR),(fixcmd y),RFTR
 if. IFUNIX do.
   2!:1 RCMD
 else.
-  spawn RCMD
+  spawn_jtask_ RCMD
 end.
 )
 
