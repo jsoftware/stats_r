@@ -21,6 +21,7 @@ NB.*rpath v Valid R path from jpath
 NB. (R requires '\\' on windows but '/' works on all platforms)
 rpath=: '\/' charsub jpath
 
+
 NB. Utilities for converting to/from map & str formats
 NB. from/to R tree structure
 
@@ -71,24 +72,24 @@ rgetmap=: 3 : 0
 NB. isattr v Is a key an attribute?
 isattr=: ATTRIB = [: {. &> rgetmap^:ismap_jmap_
 
-NB. for use with adverbs attr & vars
+NB. for use with adverbs attr & names
 getattr=: I.@:isattr { ]
-getvars=: I.@:-.@:isattr { ]
+getnames=: I.@:-.@:isattr { ]
 
 NB.*attr a Filters results of getmapr to only attributes
 NB. eg: KEYS=: getmapr attr MAPRTREE
 NB. eg: VALUE=: 'model' getmapr attr MAPRTREE
 attr=: 1 : 'getattr_rbase_@:u'
 
-NB.*vars a Filters results of getmapr to non-attributes
-NB. eg: KEYS=: getmapr vars MAPRTREE
-NB. eg: VALUE=: 'model' getmapr vars MAPRTREE
-vars=: 1 : 'getvars_rbase_@:u'
+NB.*names a Filters results of getmapr to non-attributes
+NB. eg: KEYS=: getmapr names MAPRTREE
+NB. eg: VALUE=: 'model' getmapr names MAPRTREE
+names=: 1 : 'getnames_rbase_@:u'
+
 
 NB. Exported to the z locale
 
 Rmap_z_=: rgetmap_rbase_
 Rattr_z_=: rgetmap_rbase_ attr_rbase_
-Rvars_z_=: rgetmap_rbase_ vars_rbase_
-
-
+Rnames_z_=: rgetmap_rbase_ names_rbase_
+Rclass_z_=: (ATTRIB,'class')&rgetmap_rbase_
