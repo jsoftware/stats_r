@@ -1,37 +1,41 @@
-NB. Utilities for converting to/from map & str formats
-NB. from/to R tree structure
+NB. Utilities for working with R map structures
 
 DELIM=: '$'
 ATTRIB=: '`'
 
-NB.delimit v Delimits list of boxed strings y with x
-delimit=: ' '&$: : (4 : '(;@(#^:_1!.(<x))~  1 0$~0 >. _1 2 p.#) y')
+STRTYP=. 2 65536 131072
+istble=. ((2: = {:) *. 2: = #)@$
+isstr=. (STRTYP e.~3!:0&>) *./@, 2>#@$&>
+iskeys=. (isstr *. 1: = L.)@:({."1)
 
-NB.parsekey v Parses string of key name for getmapr
+NB.*ismap v Is y an R map structure
+NB. eg: BOOL=: ismap MAPR
+ismap=: (iskeys *. istble) f.
+
+NB.parsekey v Parses string of key name for getmap
 NB. returns list of boxed literals describing key
 NB.  eg:  parsekey 'terms$`terms.labels'
 parsekey=: [: <;._1 DELIM&,@:>
 
-NB.*ndxmap v Indices in MAP of all keys with leading keys matching x
-NB. eg: 'key' rndxmap MAP
+NB.*ndxmap v Indices in MAPR of all keys with leading keys matching x
+NB. eg: 'key' ndxmap MAPR
 ndxmap=: 4 : 0
   lookup=. parsekey x
-  NB. keys=. ((#lookup) {. parsekey@])&.> getmap y
-  keys=. lookup&((#@[ <. #@]) {. parsekey@])&.> rgetmap y
+  keys=. lookup&((#@[ <. #@]) {. parsekey@])&.> getmap y
   I. keys e.&> <,:lookup
 )
 
-NB.*rgetmap v [monad] Returns keys for R map structure
-NB. eg: KEYS=: rgetmap MAPR
+NB.*getmap v [monad] Returns keys for R map structure
+NB. eg: KEYS=: getmap MAPR
 
-NB.*rgetmap v [dyad] Returns value(s) from R map structure
+NB.*getmap v [dyad] Returns value(s) from R map structure
 NB. result: value(s) of key(s) matching x if exact match
 NB.       map of trailing keys and values if x matches leading keys
-NB. form: key rgetmap mapstruct
+NB. form: key getmap mapstruct
 NB. key is: string of key names delimited by DELIM.
 NB.       attribute names are designated by leading ATTRIB
-NB. eg: VALUE=: 'qr$qr$`dimnames' rgetmap MAPR
-rgetmap=: 3 : 0
+NB. eg: VALUE=: 'qr$qr$`dimnames' getmap MAPR
+getmap=: 3 : 0
   {."1 y
   :
   try.
@@ -39,25 +43,25 @@ rgetmap=: 3 : 0
     if. *./ x&(>@[ =&# ]) &> {."1 tmp do.
       >,/{:"1 tmp
     else.
-      keys=. DELIM&delimit@((#parsekey x) }. parsekey@])&.> rgetmap tmp
+      keys=. DELIM&joinstring@((#parsekey x) }. parsekey@])&.> getmap tmp
       keys,.{:"1 tmp
     end.
   catch. empty'' end.
 )
 
 NB. isattr v Is a key an attribute?
-isattr=: ATTRIB = [: {. &> rgetmap^:ismap_jmap_
+isattr=: ATTRIB = [: {. &> getmap^:ismap_jmap_
 
-NB. for use with adverbs attr & names
-getattr=: I.@:isattr { ]
-getnames=: I.@:-.@:isattr { ]
+NB.*getattr v Filters y for attributes
+NB. eg: getattr getmap MAPR
+NB. eg: getattr 'model' getmap MAPR
+getattr=: #~ isattr
 
-NB.*attr a Filters results of getmapr to only attributes
-NB. eg: KEYS=: getmapr attr MAPRTREE
-NB. eg: VALUE=: 'model' getmapr attr MAPRTREE
-attr=: 1 : 'getattr_rbase_@:u'
+NB.*getnames v Filters y for names
+NB. eg: getnames getmap MAPR
+NB. eg: getnames 'model' getmap MAPR
+getnames=: #~ -.@isattr
 
-NB.*names a Filters results of getmapr to non-attributes
-NB. eg: KEYS=: getmapr names MAPRTREE
-NB. eg: VALUE=: 'model' getmapr names MAPRTREE
-names=: 1 : 'getnames_rbase_@:u'
+NB.top a Returns unique top level labels from R map structure
+NB. eg getnames_rbase top_rbase_ iris
+top=: 1 : '([: ~. DELIM_rbase_&taketo&.>@u)@(getmap_rbase_^:ismap_rbase_) y'

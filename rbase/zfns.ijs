@@ -1,6 +1,8 @@
 NB. Exported to the z locale
 
-Rmap_z_=: rgetmap_rbase_
-Rattr_z_=: rgetmap_rbase_ attr_rbase_
-Rnames_z_=: rgetmap_rbase_ names_rbase_
-Rclass_z_=: (ATTRIB,'class')&rgetmap_rbase_
+Rmap_z_=: getmap_rbase_
+Rattr_z_=: getattr_rbase_@getmap_rbase_
+Rnames_z_=: getnames_rbase_@getmap_rbase_
+Rclass_z_=: getclass_rbase_
+Rshow_z_=: Rshow_rbase_
+Rdata_z_=: Rdata_rbase_
