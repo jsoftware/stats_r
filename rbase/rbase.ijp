@@ -6,12 +6,13 @@ PRIMARYFILES=: 0 : 0
 ~R/rbase/init
 ~R/rbase/util
 ~R/rbase/rmap
+~R/rbase/showdata
 ~R/rbase/zfns
 )
 
 PRIMARYLIBS=: 0 : 0
-map
 pack
+strings
 )
 
 DEVFILES=: ''
