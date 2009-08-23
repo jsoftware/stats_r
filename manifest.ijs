@@ -12,7 +12,7 @@ For more information, see wiki page http://www.jsoftware.com/jwiki/Interfaces/R 
 
 LABCATEGORY=: 'Stats'
 
-VERSION=: '1.0.16'
+VERSION=: '1.0.17'
 
 RELEASE=: 'j602'
 
