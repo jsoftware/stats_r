@@ -19,7 +19,10 @@ DEVFILES=: ''
 
 DEVLIBS=: ''
 
-OTHERFILES=: '~R/rbase/test0.ijs'
+OTHERFILES=: 0 : 0
+~R/rbase/test0.ijs
+~R/test_rbase.ijs
+)
 
 TARGETFILE=: '~R/rbase.ijs'
 

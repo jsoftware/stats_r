@@ -25,5 +25,6 @@ rdcom.ijs
 rdsock.ijs
 rserve.ijs
 test_rserve.ijs
+test_rbase.ijs
 )
 

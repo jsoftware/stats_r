@@ -1,4 +1,14 @@
 NB. postbuild
+NB.
+NB. copy to ~addons
 
-to=. jpath '~addons/stats/r/rbase.ijs'
-to fcopynew jpath XTARGETFILE_jproject_
+require 'files'
+
+f=. 3 : 0
+fm=. jpath '~R/',y
+to=. jpath '~addons/stats/r/',y
+to fcopynew fm
+)
+
+f 'rbase.ijs'
+f 'test_rbase.ijs'

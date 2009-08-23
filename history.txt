@@ -1,5 +1,12 @@
 stats/r - change history
 
+== 1.0.17 ==
+ * rework rbase interface for working with R map structures.
+ * add framework for displaying formatted object depending on its R class.
+ * add framework for returning data from object depending on its R class.
+ * add utils for displaying data.frame, factor, matrix and other simple classes.
+ * add utils for returning data from data.frame, factor and matrix.
+
 == 1.0.16 ==
  * change rserve to require usual profile
 
