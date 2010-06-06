@@ -1,5 +1,8 @@
 NB. init
 
+coclass 'prdcmd'
+NB. init
+
 NB. path to R binary (change as appropriate):
 RBINX=: '/usr/bin/R'
 RBINW=: '"c:\program files\r\r-2.4.1\bin\r.exe"'
