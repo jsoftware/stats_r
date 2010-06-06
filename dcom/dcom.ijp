@@ -32,7 +32,7 @@ BUILDOPTS=: 0 1 0 0 0 0 0
 
 PREBUILDFILE=: ''
 
-POSTBUILDFILE=: '~R/dcom/save.ijs'
+POSTBUILDFILE=: '~R/dcom/postsave.ijs'
 
 TESTFILE=: '~R/dcom/test.ijs'
 

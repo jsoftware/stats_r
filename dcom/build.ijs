@@ -1,3 +1,3 @@
 NB. build
 
-writesourcex_jp_ '~Addons/stats/r/dcom';'~R/rdcom.ijs'
+load '~Addons/stats/r/dcom/save.ijs'
