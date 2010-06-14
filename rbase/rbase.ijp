@@ -1,4 +1,4 @@
-NB. project file: c:/users/rsherloc/documents/j602-user/jsrc/addons/stats/r/rbase/rbase
+NB. project file: c:/users/rsherloc/jsource/addons/stats/r/rbase/rbase
 
 coclass 'jproject'
 
@@ -10,10 +10,7 @@ PRIMARYFILES=: 0 : 0
 ~R/rbase/zfns
 )
 
-PRIMARYLIBS=: 0 : 0
-pack
-strings
-)
+PRIMARYLIBS=: ''
 
 DEVFILES=: ''
 

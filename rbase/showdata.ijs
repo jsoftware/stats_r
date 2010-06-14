@@ -10,26 +10,26 @@ Rclass=: 3 : 0
  res=. '`class' Rmap y
  if. 0 = >./ #&> boxopen res do.
    res=. empty''
-   if. ismap y  do. NB. check if map structure
-     if. #dat=. '`data' Rmap y do. NB. if `data attribute present
+   if. ismap y  do.                 NB. check if map structure
+     if. #dat=. '`data' Rmap y do.  NB. if `data attribute present
        NB. rank 2 - matrix ('qr$qr' Rmap MAPR)
        NB. > rank 2 - array
        res=. (;:'vector matrix array'){::~ 1 2 i. #$dat
      else.
        if. 1 = L. y do. 
-         res=. 'numeric' NB. - numeric ('residuals' Rmap MAPR)
+         res=. 'numeric'            NB. - numeric ('residuals' Rmap MAPR)
        else.
-         res=. 'unknown' NB. 
+         res=. 'unknown'
        end.
      end.
-   else.  NB. not a map structure
-     if. 0 = L. y do. NB. not boxed
+   else.                            NB. not a map structure
+     if. 0 = L. y do.               NB. not boxed
        if. 1 < #$y do. 
          res=. (;:'vector matrix array'){::~ 1 2 i. #$y
        else.
          res=. datatype y
        end.
-     else. NB. is boxed
+     else.                          NB. is boxed
        res=. 'list'
        NB. check if boxed list with `NULL in 2nd one - call
        NB. check if boxed list containing literals - character (Rmap 'residuals' Rmap MAPR)

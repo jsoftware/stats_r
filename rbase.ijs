@@ -1,18 +1,10 @@
-NB. built from project: ~R/rbase/rbase
-NB. init
-NB.
-NB. rbase project intended for standard R utilities
+NB. stats/r/rbase
+NB. Standard utilities for rserve interface with R
 
-script_z_ '~system/main/pack.ijs'
-script_z_ '~system/main/strings.ijs'
+require 'pack strings'
 
 coclass 'rbase'
-
-
 coinsert 'rserve'
-
-NB. util
-
 NB. =========================================================
 NB. R range
 range=: <./ , >./
@@ -24,8 +16,6 @@ rpath=: '\/' charsub jpath
 NB. utils from Inverted Tables essay
 ifa=: <@(>"1)@|:  NB. inverted from atomic
 afi=: |:@:(<"_1@>)  NB. atomic from inverted
-
-
 NB. =========================================================
 NB. Utilities for working with R map structures
 
@@ -119,8 +109,6 @@ Rnames=: 3 : 'Rnamekeys bytoplevel y'
 
 NB.*Rattr v [monad] retrieves top-level R attribute keys from map structure y
 Rattr=:  3 : 'Rattrkeys bytoplevel y'
-
-
 NB. =========================================================
 NB. Utilities for displaying formated R map structures
 NB. and returning data from R map structures based on class of structure
@@ -133,26 +121,26 @@ Rclass=: 3 : 0
  res=. '`class' Rmap y
  if. 0 = >./ #&> boxopen res do.
    res=. empty''
-   if. ismap y  do. NB. check if map structure
-     if. #dat=. '`data' Rmap y do. NB. if `data attribute present
+   if. ismap y  do.                 NB. check if map structure
+     if. #dat=. '`data' Rmap y do.  NB. if `data attribute present
        NB. rank 2 - matrix ('qr$qr' Rmap MAPR)
        NB. > rank 2 - array
        res=. (;:'vector matrix array'){::~ 1 2 i. #$dat
      else.
        if. 1 = L. y do. 
-         res=. 'numeric' NB. - numeric ('residuals' Rmap MAPR)
+         res=. 'numeric'            NB. - numeric ('residuals' Rmap MAPR)
        else.
-         res=. 'unknown' NB. 
+         res=. 'unknown'
        end.
      end.
-   else.  NB. not a map structure
-     if. 0 = L. y do. NB. not boxed
+   else.                            NB. not a map structure
+     if. 0 = L. y do.               NB. not boxed
        if. 1 < #$y do. 
          res=. (;:'vector matrix array'){::~ 1 2 i. #$y
        else.
          res=. datatype y
        end.
-     else. NB. is boxed
+     else.                          NB. is boxed
        res=. 'list'
        NB. check if boxed list with `NULL in 2nd one - call
        NB. check if boxed list containing literals - character (Rmap 'residuals' Rmap MAPR)
@@ -252,8 +240,7 @@ dataFactor=: 3 : 0
 )
 
 showList=: >^:(1 = L.)
-
-
+NB. =========================================================
 NB. Exported to the z locale
 
 Rmap_z_=: Rmap_rbase_
@@ -266,4 +253,3 @@ Rattr_z_=: Rattr_rbase_
 Rclass_z_=: Rclass_rbase_
 Rshow_z_=: Rshow_rbase_
 Rdata_z_=: Rdata_rbase_
-
