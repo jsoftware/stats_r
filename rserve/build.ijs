@@ -1,3 +1,3 @@
 NB. build
 
-writesourcex_jp_ '~Addons/stats/r/rserve';'~R/rdsock.ijs'
+writesource_jp_ '~Addons/stats/r/rserve';'~R/rdsock.ijs'
