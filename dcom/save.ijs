@@ -1,7 +1,17 @@
 NB. save
 
-writesourcex_jp_ '~Addons/stats/r/dcom';'~R/rdcom.ijs'
+prepend=. 0 : 0
+3 : 0''
+if. IFJ6 do.
+  script_z_ '~system/main/strings.ijs'
+end.
+''
+()
+)
 
-TO=: jpath '~Addons/stats/r/rdcom.ijs'
-FM=: jpath '~R/dcom/rdcom.ijs'
-TO fcopynew FM
+dat=. (('()';')') stringreplace prepend), readsource_jp_ '~R/dcom'
+dat fwrite jpath '~R/rdcom.ijs'
+
+to=. jpath '~addons/stats/r/rdcom.ijs'
+fm=. jpath '~R/dcom/rdcom.ijs'
+empty to fcopynew fm

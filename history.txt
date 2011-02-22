@@ -1,5 +1,8 @@
 stats/r - change history
 
+== 1.0.18 ==
+ * j701
+
 == 1.0.17 ==
  * rework rbase interface for working with R map structures.
  * add framework for displaying formatted object depending on its R class.

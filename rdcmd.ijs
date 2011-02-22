@@ -1,12 +1,17 @@
-NB. built from project: ~R/dcmd/dcmd
+3 : 0''
+if. IFJ6 do.
+  script_z_ '~system/main/files.ijs'
+  script_z_ '~system/main/strings.ijs'
+  script_z_ '~system/packages/misc/task.ijs'
+else.
+  require 'task'
+end.
+''
+)
 NB. init
 
-script_z_ '~system/main/files.ijs'
-script_z_ '~system/main/strings.ijs'
-script_z_ '~system/packages/misc/task.ijs'
-
 coclass 'prdcmd'
-
+NB. init
 
 NB. path to R binary (change as appropriate):
 RBINX=: '/usr/bin/R'
@@ -31,7 +36,6 @@ RCMD=: RBIN,opt,'"',RIN,'" "',ROUT,'"'
 )
 
 destroy=: codestroy
-
 NB. util
 
 EMPTY=: i.0 0
@@ -46,8 +50,6 @@ NB. replace NB. by #
 fixcmd=: 3 : 0
 y rplc 'NB.';'#'
 )
-
-
 NB. cmd
 
 p=. jpath '~temp/'
@@ -110,8 +112,6 @@ cmdps=: 3 : 0
 cmdp y
 fread ROUT
 )
-
-
 NB. zfns
 NB.
 NB. interactive cover functions, defined by makezfns,
@@ -143,4 +143,3 @@ NB. =========================================================
 makezfns=: 3 : 0
 (> coname'') & makezfn ;._2 ZFNS
 )
-

@@ -1,10 +1,13 @@
-NB. built from project: ~R/dcom/dcom
+3 : 0''
+if. IFJ6 do.
+  script_z_ '~system/main/strings.ijs'
+end.
+''
+)
 NB. init
 
-script_z_ '~system/main/strings.ijs'
-
 coclass 'prdcom'
-
+NB. init
 
 NB. =========================================================
 create=: 3 : 0
@@ -36,8 +39,6 @@ NB. replace NB. by #
 fixcmd=: 3 : 0
 y rplc 'NB.';'#'
 )
-
-
 NB. init
 NB.
 NB. dcom commands are sent one by one
@@ -112,8 +113,6 @@ exec <- function(sourceText)
   return(res)
 }
 )
-
-
 NB. zfns
 NB.
 NB. interactive cover functions, defined by makezfns,
@@ -141,4 +140,3 @@ NB. =========================================================
 makezfns=: 3 : 0
 (> coname'') & makezfn ;._2 ZFNS
 )
-
