@@ -17,7 +17,6 @@ PRIMARYFILES=: 0 : 0
 
 PRIMARYLIBS=: 0 : 0
 dll
-libpath
 socket
 )
 
