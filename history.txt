@@ -1,6 +1,9 @@
 stats/r - change history
 
-== 1.0.18 ==
+== 1.0.20 ==
+ * s/wdinfo/sminfo/
+
+== 1.0.18/19 ==
  * j701
 
 == 1.0.17 ==

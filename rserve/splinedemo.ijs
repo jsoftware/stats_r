@@ -14,7 +14,7 @@ try.
   'df' rdset df
   res=. rdget 'bs(x,df=df)'
 catcht.
-  wdinfo 'Splines Library';throwtext_rserve_
+  sminfo 'Splines Library';throwtext_rserve_
 end.
 'data' getmap res
 )
@@ -34,7 +34,7 @@ rdcmd 'library(splines)'
 'x df deg int' rdset arg
 res=. rdget 'bs(x,df=df,degree=deg,intercept=int)'
 catcht.
-  wdinfo 'Splines Library';throwtext_rserve_
+  sminfo 'Splines Library';throwtext_rserve_
 end.
 'data' getmap res
 )

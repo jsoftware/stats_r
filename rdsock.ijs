@@ -24,7 +24,7 @@ NB. =========================================================
 ax=: a.&i.
 atoi=: 256 #. a. i. |.
 av=: ({&a.)`] @. (2 = 3!:0)
-info=: wdinfo @ ('rserve'&;)
+info=: sminfo @ ('rserve'&;)
 isboxed=: 0 < L.
 ischar=: 2 = 3!:0
 isinteger=: (-: <.) ::0:
