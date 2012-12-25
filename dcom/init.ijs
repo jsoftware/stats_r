@@ -7,7 +7,7 @@ NB. =========================================================
 create=: 3 : 0
 makezfns''
 wd 'pc jdcom'
-HWNDP=: wd 'qhwndp'
+HWNDP=: wdqhwndp''
 wd 'cc w oleautomation:StatConnectorSrv.StatConnector.1'
 wd 'olemethod w base Init "R"'
 wd 'olemethod w base EvaluateNoReturn *',RDEF_exec

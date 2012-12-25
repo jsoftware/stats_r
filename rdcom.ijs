@@ -13,7 +13,7 @@ NB. =========================================================
 create=: 3 : 0
 makezfns''
 wd 'pc jdcom'
-HWNDP=: wd 'qhwndp'
+HWNDP=: wdqhwndp''
 wd 'cc w oleautomation:StatConnectorSrv.StatConnector.1'
 wd 'olemethod w base Init "R"'
 wd 'olemethod w base EvaluateNoReturn *',RDEF_exec
@@ -56,7 +56,7 @@ cmd -. a:
 NB. =========================================================
 NB. cmd - run command with no return
 cmd=: 3 : 0
-wd 'psel ',HWNDP
+wd 'psel ',":HWNDP
 for_c. cutcmd y do.
   wd 'olemethod w base EvaluateNoReturn *',>c
 end.
@@ -66,7 +66,7 @@ NB. =========================================================
 NB. cmdr - run command with return
 NB. note: each sentence must have a valid return
 cmdr=: 3 : 0
-wd 'psel ',HWNDP
+wd 'psel ',":HWNDP
 r=. ''
 for_c. cutcmd y do.
   r=. r,LF,wd 'olemethod w base Evaluate *',>c
@@ -84,14 +84,14 @@ res #~ (+./\ *. +./\.) res ~: LF
 NB. =========================================================
 NB. get - not yet supported
 get=: 3 : 0
-wd 'psel ',HWNDP
+wd 'psel ',":HWNDP
 wd 'olemethod w base GetSymbol ',y
 )
 
 NB. =========================================================
 NB. set - not yet supported
 set=: 4 : 0
-wd 'psel ',HWNDP
+wd 'psel ',":HWNDP
 wd 'olemethod w base SetSymbol ',x,' ',y
 )
 

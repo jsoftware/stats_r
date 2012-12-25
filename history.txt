@@ -1,5 +1,8 @@
 stats/r - change history
 
+== 1.0.21 ==
+ * cover verb for wd query cmds
+
 == 1.0.20 ==
  * s/wdinfo/sminfo/
 
