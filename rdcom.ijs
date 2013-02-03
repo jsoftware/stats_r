@@ -1,7 +1,4 @@
 3 : 0''
-if. IFJ6 do.
-  script_z_ '~system/main/strings.ijs'
-end.
 ''
 )
 NB. init

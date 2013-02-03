@@ -2,12 +2,7 @@ NB. build
 
 prepend=. 0 : 0
 3 : 0''
-if. IFJ6 do.
-  script_z_ '~system/main/dll.ijs'
-  script_z_ '~system/main/socket.ijs'
-else.
-  require 'socket'
-end.
+require 'socket'
 ''
 ()
 )

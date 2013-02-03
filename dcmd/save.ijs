@@ -2,13 +2,7 @@ NB. save
 
 prepend=. 0 : 0
 3 : 0''
-if. IFJ6 do.
-  script_z_ '~system/main/files.ijs'
-  script_z_ '~system/main/strings.ijs'
-  script_z_ '~system/packages/misc/task.ijs'
-else.
-  require 'task'
-end.
+require 'task'
 ''
 ()
 )
