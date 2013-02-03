@@ -8,14 +8,14 @@ This addon has interfaces to the R statistical package.
 R is the most widely used program in the statistical research community and has a vast range of statistical tools available. It is freely available on all common platforms.
 
 For more information, see wiki page http://www.jsoftware.com/jwiki/Interfaces/R .
-** this is testing version for j701 **
+
 )
 
 LABCATEGORY=: 'Stats'
 
-VERSION=: '1.0.21'
+VERSION=: '1.0.22'
 
-RELEASE=: 'j602 j701'
+RELEASE=: 'j801'
 
 FILES=: 0 : 0
 history.txt

@@ -1,5 +1,8 @@
 stats/r - change history
 
+== 1.0.22 ==
+ * move to j801
+
 == 1.0.21 ==
  * cover verb for wd query cmds
 
