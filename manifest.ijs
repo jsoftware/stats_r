@@ -13,7 +13,7 @@ For more information, see wiki page http://www.jsoftware.com/jwiki/Interfaces/R 
 
 LABCATEGORY=: 'Stats'
 
-VERSION=: '1.0.22'
+VERSION=: '1.0.23'
 
 RELEASE=: 'j801'
 
@@ -22,7 +22,6 @@ history.txt
 readme.txt
 rbase.ijs
 rdcmd.ijs
-rdcom.ijs
 rdsock.ijs
 rserve.ijs
 test_rserve.ijs
