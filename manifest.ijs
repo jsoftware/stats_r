@@ -28,4 +28,3 @@ test_rserve.ijs
 test_rbase.ijs
 )
 
-PLATFORMS=: 'linux win darwin android'
