@@ -13,9 +13,9 @@ For more information, see wiki page http://www.jsoftware.com/jwiki/Interfaces/R 
 
 LABCATEGORY=: 'Stats'
 
-VERSION=: '1.0.25'
+VERSION=: '1.0.26'
 
-RELEASE=: 'j801 j802'
+RELEASE=: 'j801 j802 j803'
 
 FILES=: 0 : 0
 history.txt
@@ -27,4 +27,3 @@ rserve.ijs
 test_rserve.ijs
 test_rbase.ijs
 )
-
