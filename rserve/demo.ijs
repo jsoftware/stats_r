@@ -14,7 +14,9 @@ $ Rget 'array(1:6,c(2,3,4,5))' NB. note preserves R shape order
 
 Rcmd 'x=factor(c("one","two","three","four"))'
 Rget 'x'
+Rgetexp 'x'
 
+Rget 'c(TRUE,FALSE,NA,TRUE,TRUE,FALSE)'
 Rget 'c(1,Inf,-Inf,NaN,NA)' NB. R NA is converted to J NAN (__)
 
 Rcmd 'x=1.23+1:8' NB. cmd = evaluate only
@@ -29,12 +31,11 @@ Rcmd 'x = c("abc","b","c","d","e","fore","g","h")'
 Rcmd 'dim(x) = c(2,4)'
 Rget 'x'          NB. note boxed result
 
-Rget 'c(TRUE,FALSE,NA,TRUE,TRUE,FALSE)'
-
 Rcmd 'foo <- function(x,y) {x + 2 * y}'
 Rget 'typeof(foo)'
 Rget 'foo(5,3)'
 Rget 'foo'
+Rgetexp 'foo'
 
 'abc' Rset 'qwerty'
 Rget 'abc'
@@ -51,5 +52,10 @@ Rget 'lxy'
 Rcmd 'data(OrchardSprays)'
 Rgetexp 'OrchardSprays'
 Rget 'OrchardSprays'
+'decrease' Rget 'OrchardSprays'
+'treatment' Rget 'OrchardSprays'
+
+a=. Rget 'lm(Infant.Mortality ~ Catholic,data=swiss)'
+a#~ (<'effects') = 7 {.each {."1 a
 
 Rclose''

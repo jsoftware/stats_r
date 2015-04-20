@@ -68,6 +68,3 @@ stats/r - change history
 
 == 1.0.0 ==
  * initial release
-
-
-

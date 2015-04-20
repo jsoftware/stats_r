@@ -1,8 +1,5 @@
 NB. testjm
 
-dbg 1
-dbstops''
-
 f=: 3 : 0
 smoutput '   ', y
 smoutput A=: Rgetexp y
@@ -20,4 +17,3 @@ Rcmd 'fm = lm(y ~ x, data=dum)'
 f 'summary (fm)'
 f 'fm'
 f 'attributes(fm)'
-

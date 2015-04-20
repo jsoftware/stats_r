@@ -1,11 +1,12 @@
 NB. init
 
+require 'task'
 coclass 'prdcmd'
 NB. init
 
 NB. path to R binary (change as appropriate):
 RBINX=: '/usr/bin/R'
-RBINW=: '"c:\program files\r\r-2.4.1\bin\r.exe"'
+RBINW=: '"c:\program files\r\r-3.1.3\bin\r.exe"'
 RBIN=: IFUNIX pick RBINW;RBINX
 
 NB. =========================================================

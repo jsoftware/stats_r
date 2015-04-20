@@ -16,7 +16,7 @@ try.
 catcht.
   sminfo 'Splines Library';throwtext_rserve_
 end.
-'data' getmap res
+'`data' Rmap res
 )
 
 NB. bs - generate the B-spline basis matrix for a polynomial spline.
@@ -30,25 +30,19 @@ intercept=. 0
 ({."1 y)=. {:"1 y
 arg=. x;df;degree;intercept
 try.
-rdcmd 'library(splines)'
-'x df deg int' rdset arg
-res=. rdget 'bs(x,df=df,degree=deg,intercept=int)'
+  rdcmd 'library(splines)'
+  'x df deg int' rdset arg
+  res=. rdget 'bs(x,df=df,degree=deg,intercept=int)'
 catcht.
   sminfo 'Splines Library';throwtext_rserve_
 end.
-'data' getmap res
+'`data' Rmap res
 )
 
 cocurrent 'base'
 
-foo=: 3 : 0
 smoutput bs1_Rsplines_ (p: i.7);3
-NB. dbstops 'bs2'
 x=. p: i. 7
 degree=. 4
 intercept=. 1
 smoutput bs2_Rsplines_ pack 'x degree intercept'
-)
-
-dbstops'foo'
-foo''

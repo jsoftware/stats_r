@@ -36,4 +36,3 @@ lsfit(x,y)
 )
 
 f Rcmdps 'plot(c(2,3,5,7,11),type="l")'
-

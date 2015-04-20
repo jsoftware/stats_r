@@ -78,7 +78,7 @@ bytoplevel=: 1 : 'gettoplevel_rbase_@:u'
 
 NB.*Rkeys v [monad] retrieves R keys from map structure y
 NB.  same as monadic Rmap
-Rkeys=: 3 : 'Rmap y' 
+Rkeys=: 3 : 'Rmap y'
 
 NB.*Rnamekeys v [monad] retrieves R name keys from map structure y
 Rnamekeys=: 3 : 'Rmap byname y'

@@ -103,4 +103,3 @@ flatt1=: 3 : 0
 'nam mat'=. y
 <nam prefixnames mat
 )
-

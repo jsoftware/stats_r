@@ -49,7 +49,7 @@ rdset=: 4 : 0
 if. isopen x do.
   x=. deb x
   if. -. ' ' e. x do.
-      x rdset1 y return.
+    x rdset1 y return.
   end.
   x=. <;._1 ' ',x
 end.
@@ -89,4 +89,3 @@ if. 1 < #s do.
 end.
 EMPTY
 )
-

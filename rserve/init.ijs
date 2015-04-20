@@ -1,6 +1,5 @@
 NB. init
 
+require 'socket'
 coclass 'rserve'
-NB. init
-
 coinsert 'jsocket'

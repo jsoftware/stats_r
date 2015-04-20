@@ -1,14 +1,6 @@
 NB. build
 
-prepend=. 0 : 0
-3 : 0''
-require 'socket'
-''
-()
-)
-
-dat=. (('()';')') stringreplace prepend), readsource_jp_ '~R/rserve'
-dat fwrite jpath '~R/rdsock.ijs'
+writesourcex_jp_ '~R/rserve';'~R/rdsock.ijs'
 
 f=. 3 : 0
 fm=. jpath '~R/',y

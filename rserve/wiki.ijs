@@ -53,7 +53,6 @@ Rcmd 'x = c("abc","b","c","d","e","fore","g","h")'
 Rcmd 'dim(x) = c(2,4)'
 Rget 'x'          NB. note boxed result
 
-
 NB. =========================================================
 NB. Rset
 'abc' Rset 'qwerty'

@@ -1,7 +1,7 @@
 NB. stats/r/rbase
 NB. Standard utilities for rserve interface with R
 
-require 'pack strings'
+require 'pack'
 
 coclass 'rbase'
 coinsert 'rserve'
@@ -96,7 +96,7 @@ bytoplevel=: 1 : 'gettoplevel_rbase_@:u'
 
 NB.*Rkeys v [monad] retrieves R keys from map structure y
 NB.  same as monadic Rmap
-Rkeys=: 3 : 'Rmap y' 
+Rkeys=: 3 : 'Rmap y'
 
 NB.*Rnamekeys v [monad] retrieves R name keys from map structure y
 Rnamekeys=: 3 : 'Rmap byname y'
@@ -114,7 +114,7 @@ NB. Utilities for displaying formated R map structures
 NB. and returning data from R map structures based on class of structure
 
 NB.*Rclass v Determines R class of (R map) structure y
-NB. If class not explicitly given by key then Rclass tries to  
+NB. If class not explicitly given by key then Rclass tries to
 NB. determine what it is: matrix, call, list, integer, numeric, ...
 NB. eg: Rclass IRIS
 Rclass=: 3 : 0
@@ -127,7 +127,7 @@ Rclass=: 3 : 0
        NB. > rank 2 - array
        res=. (;:'vector matrix array'){::~ 1 2 i. #$dat
      else.
-       if. 1 = L. y do. 
+       if. 1 = L. y do.
          res=. 'numeric'            NB. - numeric ('residuals' Rmap MAPR)
        else.
          res=. 'unknown'
@@ -135,7 +135,7 @@ Rclass=: 3 : 0
      end.
    else.                            NB. not a map structure
      if. 0 = L. y do.               NB. not boxed
-       if. 1 < #$y do. 
+       if. 1 < #$y do.
          res=. (;:'vector matrix array'){::~ 1 2 i. #$y
        else.
          res=. datatype y
@@ -156,7 +156,7 @@ NB. eg: a data.frame will show row & column labels
 NB. eg: Rshow IRIS
 Rshow=: 3 : 0
   rclass=. Rclass y
-  select. rclass 
+  select. rclass
   case. 'data.frame' do.
     showDataFrame y
   case. 'floating';'integer';'boolean' do.
@@ -177,7 +177,7 @@ NB.  the representation depends on the class of the map structure
 NB.  result: data[;labels]
 Rdata=: 3 : 0
   rclass=. Rclass y
-  select. rclass 
+  select. rclass
   case. 'data.frame' do.
     dataDataFrame y
   case. 'floating';'integer';'boolean' do.

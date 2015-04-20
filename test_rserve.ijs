@@ -14,7 +14,7 @@ Ropen''
 
 assert. (o.1) = Rget'pi'
 assert. 1 2 3 4 -: Rget 'c(1,2,3,4)'
-assert. (1 2 _ __ __) -: Rget 'c(1,2,Inf,-Inf,NA)'
+assert. (1 2 _ __) -: Rget 'c(1,2,Inf,-Inf)'
 assert. isnan_rserve_ -: Rget 'NaN'
 
 Rcmd 'x = 1:24'

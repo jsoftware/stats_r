@@ -1,3 +1,4 @@
 NB. Ensure Rserve sockets server is started
-load '~R/rbase.ijs'
+
+load 'stats/r/rbase'
 load '~R/test_rbase.ijs'
