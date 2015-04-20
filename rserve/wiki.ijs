@@ -7,6 +7,9 @@ NB. stats/r/rserve is loaded
 
 cocurrent 'base'
 
+load 'stats/r/rserve'
+Rreset''
+
 NB. =========================================================
 Rget 'pi'
 Rget '1:4'
@@ -37,7 +40,7 @@ NB. function definition
 Rcmd 'foo <- function(x,y) {x + 2 * y}'
 Rget 'typeof(foo)'
 Rget 'foo(5,3)'
-Rgetexp 'foo'
+Rget 'foo'
 
 NB. =========================================================
 NB. NA value

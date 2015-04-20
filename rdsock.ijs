@@ -92,7 +92,7 @@ len=. 4 roundup cnt
 cmd,(2 ic len),(8#ALPH0),y,(len-cnt)$ALPH0
 )
 wraplen=: 4 : '(x rtyplen #y),y'
-NAR=: 162 7 0 0 0 0 248 127 { a.
+NAR=: (162 7 0 0 0 0 240 127,:162 7 0 0 0 0 248 127) { a.
 NAJ=: 2 fc __
 CMD_login=: 1
 CMD_voidEval=: 2
@@ -560,9 +560,9 @@ case. do.
 end.
 )
 toNAJ=: 3 : 0
-d=. _8 [\ y
-if. -. NAR e. d do. y return. end.
-,NAJ (I. NAR -:"1 d) } d
+n=. NAR e.~ d=. _8 [\ y
+if. -. 1 e. n do. y return. end.
+,NAJ (I.n) } d
 )
 toRb=: 3 : 0
 (DT_BYTESTREAM{a.),(3 {. 2 ic #y),y

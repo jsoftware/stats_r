@@ -13,7 +13,7 @@ For more information, see wiki page http://www.jsoftware.com/jwiki/Interfaces/R 
 
 LABCATEGORY=: 'Stats'
 
-VERSION=: '1.0.28'
+VERSION=: '1.0.29'
 
 RELEASE=: 'j801 j802 j803 j804'
 

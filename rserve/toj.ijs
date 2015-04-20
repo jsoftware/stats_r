@@ -151,7 +151,7 @@ end.
 
 NB. =========================================================
 toNAJ=: 3 : 0
-d=. _8 [\ y
-if. -. NAR e. d do. y return. end.
-,NAJ (I. NAR -:"1 d) } d
+n=. NAR e.~ d=. _8 [\ y
+if. -. 1 e. n do. y return. end.
+,NAJ (I.n) } d
 )

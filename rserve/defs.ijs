@@ -5,7 +5,7 @@ NB. http://svn.rforge.net/Rserve/trunk/src/Rsrv.h
 
 NB. following is NA returned by R, this is
 NB. returned as the NA value (default __)
-NAR=: 162 7 0 0 0 0 248 127 { a.
+NAR=: (162 7 0 0 0 0 240 127,:162 7 0 0 0 0 248 127) { a.
 NAJ=: 2 fc __
 
 NB. =========================================================

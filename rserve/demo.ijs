@@ -16,8 +16,8 @@ Rcmd 'x=factor(c("one","two","three","four"))'
 Rget 'x'
 Rgetexp 'x'
 
-Rget 'c(TRUE,FALSE,NA,TRUE,TRUE,FALSE)'
-Rget 'c(1,Inf,-Inf,NaN,NA)' NB. R NA is converted to J NAN (__)
+Rget 'c(TRUE,FALSE,NA,TRUE,TRUE,FALSE)' NB. R bool NA is 2
+Rget 'c(1,Inf,-Inf,NaN,NA)' NB. R double NA is __
 
 Rcmd 'x=1.23+1:8' NB. cmd = evaluate only
 Rcmd 'dim(x)=c(2,4)'
