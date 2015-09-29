@@ -15,7 +15,7 @@ The distributed scripts are:
 
   rdcmd.ijs    - batch script
 
-For more information, see http://www.jsoftware.com/jwiki/Interfaces/R
+For more information, see http://code.jsoftware.com/wiki/Interfaces/R
 
 
 
