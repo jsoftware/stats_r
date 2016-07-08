@@ -13,9 +13,9 @@ For more information, see wiki page http://code.jsoftware.com/wiki/Interfaces/R 
 
 LABCATEGORY=: 'Stats'
 
-VERSION=: '1.0.29'
+VERSION=: '1.0.30'
 
-RELEASE=: 'j801 j802 j803 j804'
+RELEASE=: 'j801 j802 j803 j804 j805'
 
 FILES=: 0 : 0
 history.txt
