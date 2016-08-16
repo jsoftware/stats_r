@@ -22,7 +22,7 @@ NB. Utilities for working with R map structures
 DELIM=: '$'
 ATTRIB=: '`'
 
-STRTYP=. 2 65536 131072
+STRTYP=. 2 65536 131072 262144
 istble=. ((2: = {:) *. 2: = #)@$
 isstr=. (STRTYP e.~3!:0&>) *./@, 2>#@$&>
 iskeys=. (isstr *. 1: = L.)@:({."1)
