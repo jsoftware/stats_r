@@ -13,17 +13,19 @@ For more information, see wiki page http://code.jsoftware.com/wiki/Interfaces/R 
 
 LABCATEGORY=: 'Stats'
 
-VERSION=: '1.0.30'
+VERSION=: '1.0.31'
 
-RELEASE=: 'j801 j802 j803 j804 j805'
+RELEASE=: 'j804 j805'
 
 FILES=: 0 : 0
-history.txt
 readme.txt
 rbase.ijs
 rdcmd.ijs
 rdsock.ijs
 rserve.ijs
-test_rserve.ijs
+rserver.ijs
 test_rbase.ijs
+test_rserve.ijs
+test_rserver.ijs
+lib/
 )
