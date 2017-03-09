@@ -118,7 +118,7 @@ else.
 end.
 )
 ext=. (('Darwin';'Linux') i. <UNAME) pick ;:'dylib so dll'
-lib=: jpath '~addons/stats/r/lib/librserver.',ext
+lib=. '"',(jpath '~addons/stats/r/lib/librserver.',ext),'"'
 rclose1=: (lib,' rclose > i i') & cd
 rcmd1=: (lib,' rcmd > x *c') cd <
 rget1=: (lib,' rget x *c *') & cd
