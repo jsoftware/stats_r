@@ -13,9 +13,9 @@ For more information, see wiki page http://code.jsoftware.com/wiki/Interfaces/R 
 
 LABCATEGORY=: 'Stats'
 
-VERSION=: '1.0.33'
+VERSION=: '1.0.34'
 
-RELEASE=: 'j804 j805 j806'
+RELEASE=: 'j804 j805 j806 j807'
 
 FILES=: 0 : 0
 readme.txt
