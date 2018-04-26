@@ -15,7 +15,9 @@ LABCATEGORY=: 'Stats'
 
 VERSION=: '1.0.34'
 
-RELEASE=: 'j804 j805 j806 j807'
+RELEASE=: ''
+
+FOLDER=: 'stats/r'
 
 FILES=: 0 : 0
 readme.txt
