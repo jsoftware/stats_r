@@ -4,6 +4,8 @@ NB. test the Rserve socket connection
 NB.
 NB. requires that the R addon and Rserve are loaded
 
+require 'stats/r/rserve'
+
 cocurrent 'base'
 coreset ''
 sdcleanup_jsocket_''

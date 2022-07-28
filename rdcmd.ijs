@@ -1,7 +1,17 @@
 require 'task'
 coclass 'prdcmd'
-RBINX=: '/usr/bin/R'
-RBINW=: '"c:\program files\r\r-3.1.3\bin\r.exe"'
+RBINX=: (1~:ftype '/usr/bin/R') pick '/usr/bin/R';'/usr/local/bin/R'
+RBINW=: 3 : 0^:('Win'-:UNAME)''
+p=. (2!:5'programfiles'),'\r\'
+d=. 1 1 dir p,'*'
+i=. ;100#.each".each (2&}.@:}:each(#p)}.each d) rplc each <'.';' '
+i=. 1 i.~d i.>./i
+'R not installed in "program files" folder' assert i<#d
+p=. ,;i{d
+b=. 1 1  dir    p,'bin\r.exe'
+('R exe not found in ',;b) assert 1=#b
+'"','"',~;b
+)
 RBIN=: IFUNIX pick RBINW;RBINX
 create=: 3 : 0
 makezfns''
