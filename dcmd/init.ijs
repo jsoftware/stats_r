@@ -14,7 +14,7 @@ i=. ;100#.each".each (2&}.@:}:each(#p)}.each d) rplc each <'.';' '
 i=. 1 i.~d i.>./i
 'R not installed in "program files" folder' assert i<#d
 p=. ,;i{d
-b=. 1 1  dir    p,'bin\r.exe'
+b=. 1 1  dir    p,'bin\x64\r.exe'
 ('R exe not found in ',;b) assert 1=#b
 '"','"',~;b
 )
