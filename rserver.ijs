@@ -157,6 +157,21 @@ if. r=0 do. return. end.
 throw errorcode r
 )
 rset=: 4 : 0
+if. isopen x do.
+  x=. deb x
+  if. -. ' ' e. x do.
+    x rset1a y return.
+  end.
+  x=. <;._1 ' ',x
+end.
+if. -. (1=L.y) *. (1 >: #$y) *. (#x)=#y do.
+  throw 'Names and values do not match for rset'
+end.
+
+x rset1a each y
+
+)
+rset1a=: 4 : 0
 if. 8 < 3!:0 y do.
   throw errorcode ETYPE return.
 end.

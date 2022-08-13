@@ -1,6 +1,6 @@
 require 'task'
 coclass 'prdcmd'
-RBINX=: (1~:ftype '/usr/bin/R') pick '/usr/bin/R';'/usr/local/bin/R'
+RBINX=: ((0-:2!:5'R_HOME'){::(2!:5'R_HOME');'/usr'),'/bin/R'
 RBINW=: 3 : 0^:('Win'-:UNAME)''
 p=. (2!:5'programfiles'),'\r\'
 d=. 1 1 dir p,'*'

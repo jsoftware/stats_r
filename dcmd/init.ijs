@@ -5,7 +5,7 @@ coclass 'prdcmd'
 NB. init
 
 NB. path to R binary (change as appropriate):
-RBINX=: (1~:ftype '/usr/bin/R') pick '/usr/bin/R';'/usr/local/bin/R'
+RBINX=: ((0-:2!:5'R_HOME'){::(2!:5'R_HOME');'/usr'),'/bin/R'
 NB. RBINW=: '"c:\program files\r\r-3.1.3\bin\r.exe"'
 RBINW=: 3 : 0^:('Win'-:UNAME)''
 p=. (2!:5'programfiles'),'\r\'
