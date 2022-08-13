@@ -3,13 +3,17 @@
 UNAME=$(shell uname -s)
 
 ifeq ($(UNAME),Darwin)
-  R_HOME=/Library/Frameworks/R.framework/Resources
-  R_SHARE=$(R_HOME)
+ ifeq ($(R_HOME),)
+ R_HOME=/Library/Frameworks/R.framework/Resources
+ endif
+ R_SHARE=$(R_HOME)
 	CFLAGS=-O -fPIC -dynamiclib -undefined dynamic_lookup
 	TGT=librserver.dylib
 else
+ ifeq ($(R_HOME),)
 	R_HOME=/usr/lib/R
-	R_SHARE=/usr/share/R
+ endif
+ R_SHARE=$(R_HOME)
 	CFLAGS=-O -fPIC -shared
 	TGT=librserver.so
 endif
