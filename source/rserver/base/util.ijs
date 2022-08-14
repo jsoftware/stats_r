@@ -116,7 +116,7 @@ thrown=: msg
 if. DEBUG do.
   info 1 pick msg
 else.
-  smoutput 1 pic msg
+  smoutput 1 pick msg
 end.
 throw.
 )
