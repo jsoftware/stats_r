@@ -9,6 +9,7 @@
 #include <Rembedded.h>
 
 #ifndef WIN32
+#define CSTACK_DEFNS
 #include <Rinterface.h>
 #endif
 

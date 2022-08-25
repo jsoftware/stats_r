@@ -101,6 +101,7 @@ int ropen(int n)
   char *argv[] = {"R","--slave"};
   s=Rf_initEmbeddedR(2, argv);
   if (s<0) return ENOCONN;
+  if(1==n)R_CStackLimit = (uintptr_t)-1;
   ROPEN=1;
   return 0;
 }

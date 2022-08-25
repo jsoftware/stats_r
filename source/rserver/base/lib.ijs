@@ -49,7 +49,7 @@ rgetexp=: sexp2list @ rgetx
 
 NB. =========================================================
 ropen=: 3 : 0
-r=. ropen1 0
+r=. ropen1 {.y,0
 if. r=0 do. return. end.
 throw errorcode r
 )
