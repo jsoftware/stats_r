@@ -29,7 +29,15 @@ errormsg=: 3 : 0
 if. y e. ERRNUM do.
   'Error code: ',(":y),' ',(ERRNUM i. y) pick ERRMSG
 else.
-  'Status code: ',":y
+  if. y-:127 do.
+    try.
+      rdget 'geterrmessage()'
+    catcht.
+      'Status code: ',":y
+    end.
+  else.
+    'Status code: ',":y
+  end.
 end.
 )
 fixscalar=: 3 : 0
