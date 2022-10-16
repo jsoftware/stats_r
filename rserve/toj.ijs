@@ -11,7 +11,7 @@ NB.    1  read SEXP format
 NB.    2  read map format
 rread=: 3 : 0
 res=. read''
-if. 1 ~: ax 2 { res do.
+if. 1 ~: ax 2 { res,(3#{.a.) do.
   throw 'invalid response flag'
 end.
 rc=. _1 ic 2 {. res
