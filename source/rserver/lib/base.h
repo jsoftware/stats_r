@@ -22,7 +22,13 @@
 typedef void* J;
 typedef long long I;
 // array rep: flag, type, count, rank, shape ...
-typedef struct AREP {I f;I t;I c;I r;I s[1];} *A;
+typedef struct AREP {
+  I f;
+  I t;
+  I c;
+  I r;
+  I s[1];
+} *A;
 
 A jattval(A,A);
 A jboolv(I, char*);

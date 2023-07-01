@@ -117,7 +117,7 @@ else.
  'unknown error number: ',":y
 end.
 )
-ext=. (('Darwin';'Linux') i. <UNAME) pick ;:'dylib so dll'
+ext=. (('Darwin';'Win') i. <UNAME) pick ;:'dylib dll so'
 lib=. '"',(jpath '~addons/stats/r/lib/librserver.',ext),'"'
 rclose1=: (lib,' rclose > i i') & cd
 rcmd1=: (lib,' rcmd > x *c') cd <

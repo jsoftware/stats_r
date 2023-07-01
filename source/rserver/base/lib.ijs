@@ -1,6 +1,5 @@
 NB. lib
-
-ext=. (('Darwin';'Linux') i. <UNAME) pick ;:'dylib so dll'
+ext=. (('Darwin';'Win') i. <UNAME) pick ;:'dylib dll so'
 lib=. '"',(jpath '~addons/stats/r/lib/librserver.',ext),'"'
 
 NB. =========================================================
